@@ -11,7 +11,7 @@ public class Controller
 
     private TransactionRepository transactionRepository;
 
-    // toate functiile userilor aici; in view facem trierea dupa felul de user
+    // toate functiile userilor aici; in view facem trierea dupa tipul de user
 
     int checkCreds(String user, String pass)
     {
