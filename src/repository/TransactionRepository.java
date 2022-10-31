@@ -1,6 +1,8 @@
 package repository;
 
-public interface TransactionRepository extends ICrudRepository
+import model.Transaction;
+
+public interface TransactionRepository extends ICrudRepository <Integer, Transaction>
 {
 
 }
