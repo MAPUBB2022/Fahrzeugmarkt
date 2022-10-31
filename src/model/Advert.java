@@ -2,6 +2,7 @@ package model;
 
 public abstract class Advert
 {
+
     private Seller seller;
 
     private String make, model;

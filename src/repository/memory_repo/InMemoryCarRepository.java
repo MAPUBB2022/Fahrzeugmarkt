@@ -27,11 +27,19 @@ public class InMemoryCarRepository implements AdsRepository
 
     @Override
     public void update(Integer integer, Advert advert) {
+        if(findId(integer)!=null)
+            advertList.set(integer, advert);
+        else
+            System.out.println("Advert does not exists");
 
     }
 
     @Override
     public Advert findId(Integer integer) {
+        for (Advert advert : advertList) {
+            if (advert.getID() == integer)
+                return advert;
+        }
         return null;
     }
 }
