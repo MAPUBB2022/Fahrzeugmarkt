@@ -1,8 +1,15 @@
 package controller;
 
+import model.Admin;
+import model.Buyer;
+import model.Seller;
+import model.User;
 import repository.AdsRepository;
 import repository.TransactionRepository;
 import repository.UserRepository;
+import repository.memory_repo.InMemoryCarRepository;
+import repository.memory_repo.InMemoryTransactionRepository;
+import repository.memory_repo.InMemoryUserRepository;
 
 public class Controller
 {
@@ -11,10 +18,21 @@ public class Controller
 
     private TransactionRepository transactionRepository;
 
+    public Controller() {
+        this.userRepository = new InMemoryUserRepository();
+        this.adsRepository = new InMemoryCarRepository();
+        this.transactionRepository = new InMemoryTransactionRepository();
+    }
+
     // toate functiile userilor aici; in view facem trierea dupa felul de user
 
-    int checkCreds(String user, String pass)
+    public int checkCreds(String user, String pass)
     {
+        User u = userRepository.findByUserAnsPass(user, pass);
+        if(u instanceof Buyer)
+            return 1;
+        if(u instanceof Seller)
+            return 2;
         return 0;
     }
 
@@ -31,14 +49,6 @@ public class Controller
     void buyUpfront()
     {
 
-    }
-
-
-
-    public Controller(UserRepository userRepository, AdsRepository adsRepository, TransactionRepository transactionRepository) {
-        this.userRepository = userRepository;
-        this.adsRepository = adsRepository;
-        this.transactionRepository = transactionRepository;
     }
 
     public UserRepository getUserRepository() {

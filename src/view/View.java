@@ -6,8 +6,12 @@ public class View
 {
     private Controller controller;
 
-    public View(Controller controller) {
-        this.controller = controller;
+    private int userMode;
+
+    public View()
+    {
+        this.controller = new Controller();
+        userMode = -1;
     }
 
     public void login()
