@@ -22,7 +22,7 @@ public class InMemoryCarRepository implements AdsRepository
 
     @Override
     public void delete(Integer integer) {
-
+        advertList.remove((findId(integer)));
     }
 
     @Override
