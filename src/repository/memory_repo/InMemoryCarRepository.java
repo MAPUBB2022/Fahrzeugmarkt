@@ -17,7 +17,7 @@ public class InMemoryCarRepository implements AdsRepository
 
     @Override
     public void add(Advert advert) {
-
+        advertList.add(advert);
     }
 
     @Override
