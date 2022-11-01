@@ -37,7 +37,7 @@ public class Controller
         return 0;
     }
 
-
+    // craca lu atletu
 
     void sellCar()
     {
