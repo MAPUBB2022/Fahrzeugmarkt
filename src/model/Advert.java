@@ -2,10 +2,11 @@ package model;
 
 public abstract class Advert
 {
+
     private Seller seller;
 
     private String make, model;
-    private int year, displacement, hp, torque, startPrice, buyPrice;
+    private int year, displacement, hp, torque, startPrice, buyPrice,ID;
     private boolean used, automaticGearbox;
 
     public int getStartPrice() {
@@ -24,6 +25,14 @@ public abstract class Advert
         this.buyPrice = buyPrice;
     }
 
+    public int getID() {
+        return ID;
+    }
+
+    public void setID(int ID) {
+        this.ID = ID;
+    }
+
     public Advert(String make, String model, int year, int displacement, int hp, int torque, boolean used, boolean automaticGearbox) {
         this.make = make;
         this.model = model;
@@ -33,6 +42,7 @@ public abstract class Advert
         this.automaticGearbox = automaticGearbox;
         this.hp = hp;
         this.torque = torque;
+        this.ID=-1;
     }
 
     public boolean isAutomaticGearbox() {
@@ -96,6 +106,6 @@ public abstract class Advert
     }
 
     public void setTorque(int torque) {
-        this.torque = torque;
-    }
+        this.torque =torque;
+}
 }
