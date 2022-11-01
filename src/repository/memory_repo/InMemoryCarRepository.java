@@ -31,7 +31,11 @@ public class InMemoryCarRepository implements AdsRepository {
     public void update(Integer integer, Advert advert) {
 
         if (findId(integer) != null)
+        {
             advertList.set(integer, advert);
+            // sa pastreze id ul
+        }
+
         else
             System.out.println("Advert does not exists");
 
