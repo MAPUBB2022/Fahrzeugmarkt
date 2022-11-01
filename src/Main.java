@@ -7,5 +7,6 @@ public class Main {
         View view = new View();
         view.login();
         view.mainMenu();
+        view.createAd();
     }
 }
