@@ -10,28 +10,47 @@ import java.util.List;
 public class InMemoryTransactionRepository implements TransactionRepository
 {
     private List<Transaction> transactionList;
+    private int currentID;
 
     public InMemoryTransactionRepository() {
         this.transactionList = new ArrayList<>();
+        currentID = 0;
     }
 
     @Override
-    public void add(Object o) {
-
+    public void add(Transaction transaction) {
+        transaction.setId(currentID++);
+        transactionList.add(transaction);
     }
 
     @Override
-    public void delete(Object o) {
-
+    public void delete(Integer id)
+    {
+        Transaction t = findId(id);
+        if(t!=null)
+            transactionList.remove(t);
     }
 
     @Override
-    public void update(Object o, Object o2) {
-
+    public void update(Integer id, Transaction newTransaction)
+    {
+        Transaction t = findId(id);
+        if(t!=null)
+        {
+            transactionList.set(transactionList.indexOf(t), newTransaction);
+        }
     }
 
     @Override
-    public Object findId(Object o) {
+    public Transaction findId(Integer id)
+    {
+        for(Transaction t: transactionList)
+        {
+            if(t.getId() == id)
+            {
+                return t;
+            }
+        }
         return null;
     }
 }
