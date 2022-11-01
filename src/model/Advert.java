@@ -33,7 +33,8 @@ public abstract class Advert
         this.ID = ID;
     }
 
-    public Advert(String make, String model, int year, int displacement, int hp, int torque, boolean used, boolean automaticGearbox, int ID) {
+    public Advert(String make, String model, int year, int displacement, int hp, int torque, boolean used, boolean automaticGearbox) {
+
         this.make = make;
         this.model = model;
         this.year = year;
@@ -42,7 +43,7 @@ public abstract class Advert
         this.automaticGearbox = automaticGearbox;
         this.hp = hp;
         this.torque = torque;
-        this.ID=ID;
+        this.ID=-1;
     }
 
     public boolean isAutomaticGearbox() {
@@ -106,6 +107,6 @@ public abstract class Advert
     }
 
     public void setTorque(int torque) {
-        this.torque = torque;
-    }
+        this.torque =torque;
+}
 }

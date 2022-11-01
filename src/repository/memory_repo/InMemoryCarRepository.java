@@ -7,27 +7,30 @@ import repository.AdsRepository;
 import java.util.ArrayList;
 import java.util.List;
 
-public class InMemoryCarRepository implements AdsRepository
-{
+public class InMemoryCarRepository implements AdsRepository {
     private List<Advert> advertList;
-
+    private int currentID = 0;
     public InMemoryCarRepository() {
         this.advertList = new ArrayList<>();
     }
 
     @Override
     public void add(Advert advert) {
+        advert.setID(currentID++);
         advertList.add(advert);
     }
 
     @Override
     public void delete(Integer integer) {
-        advertList.remove((findId(integer)));
+
+        if (findId(integer) != null)
+            advertList.remove((findId(integer)));
     }
 
     @Override
     public void update(Integer integer, Advert advert) {
-        if(findId(integer)!=null)
+
+        if (findId(integer) != null)
             advertList.set(integer, advert);
         else
             System.out.println("Advert does not exists");

@@ -6,5 +6,6 @@ public class Main {
         //System.out.println("Hello world!");
         View view = new View();
         view.login();
+        view.mainMenu();
     }
 }

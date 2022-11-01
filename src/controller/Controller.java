@@ -18,6 +18,7 @@ public class Controller
 
     private TransactionRepository transactionRepository;
 
+    // toate functiile userilor aici; in view facem trierea dupa tipul de user
     public Controller() {
         this.userRepository = new InMemoryUserRepository();
         this.adsRepository = new InMemoryCarRepository();
@@ -35,6 +36,8 @@ public class Controller
             return 2;
         return 0;
     }
+
+
 
     void sellCar()
     {

@@ -2,17 +2,27 @@ package model;
 
 public class Transaction
 {
-    Buyer buyer;
-    Seller seller;
+    private int id;
+    private Buyer buyer;
+    private Seller seller;
     private int amount, date; // YYYYMMDD
     private boolean bid;
 
     public Transaction(Buyer buyer, Seller seller, int amount, int date, boolean bid) {
+        this.id = -1;
         this.buyer = buyer;
         this.seller = seller;
         this.amount = amount;
         this.date = date;
         this.bid = bid;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public Buyer getBuyer() {

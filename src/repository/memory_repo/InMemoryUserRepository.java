@@ -13,8 +13,10 @@ public class InMemoryUserRepository implements UserRepository
 {
     private List<User> allUsers;
 
-    public InMemoryUserRepository() {
+    public InMemoryUserRepository()
+    {
         this.allUsers = new ArrayList<>();
+        populateUsers();
     }
 
     public void populateUsers()
