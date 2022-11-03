@@ -1,15 +1,15 @@
 package controller;
 
-import model.Admin;
-import model.Buyer;
-import model.Seller;
-import model.User;
+import model.*;
 import repository.AdsRepository;
 import repository.TransactionRepository;
 import repository.UserRepository;
 import repository.memory_repo.InMemoryCarRepository;
 import repository.memory_repo.InMemoryTransactionRepository;
 import repository.memory_repo.InMemoryUserRepository;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Controller
 {
@@ -37,21 +37,57 @@ public class Controller
         return 0;
     }
 
-
-
-    void sellCar() // aka place advert
+    void sellCar(Advert e) // aka place advert
     {
+        // business logic daca mai trebuie punem aici
+        adsRepository.add(e);
+    }
+
+    void placeBid(Transaction t)
+    {
+        //TODO de verificat sa nu fi trecut termenul licitatiei inainte de a plasa bid-ul
+        if(adsRepository.findId(t.getAd().getBuyPrice()) != null) // the ad on which it is bid should still exist
+            transactionRepository.add(t);
 
     }
 
-    void placeBid()
+    List<Advert> getAllAdsFromSeller(Seller s)
     {
-
+        List<Advert> allAds = adsRepository.findAll();
+        List<Advert> result = new ArrayList<>();
+        for (Advert ad : allAds)
+        {
+            if (ad.getSeller() == s)
+                result.add(ad);
+        }
+        return result;
     }
 
-    void buyUpfront()
+    void buyUpfront(Transaction t)
     {
+        if(adsRepository.findId(t.getAd().getBuyPrice()) != null) // the ad on which it is bid should still exist
+            transactionRepository.add(t);
+    }
 
+    List<Advert> getAllAds()
+    {
+        return adsRepository.findAll();
+    }
+
+    Advert getAdByID(int id)
+    {
+        return adsRepository.findId(id);
+    }
+
+    void denyTransaction(Transaction t) // the seller doesn't accept the buy offer / the highest bid => the transaction gets deleted
+    {
+        transactionRepository.delete(t.getId());
+    }
+
+    void acceptTransaction(Transaction t) // the seller accepts the buy offer / the highest bid => the transaction and ad get deleted
+    {
+        adsRepository.delete(t.getAd().getID()); // car is sold => no longer available on the site
+        transactionRepository.delete(t.getId()); // car no longer available => transaction references non-existent car and is deleted
     }
 
     public UserRepository getUserRepository() {

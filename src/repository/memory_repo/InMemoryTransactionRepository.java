@@ -53,4 +53,9 @@ public class InMemoryTransactionRepository implements TransactionRepository
         }
         return null;
     }
+
+    @Override
+    public List<Transaction> findAll() {
+        return transactionList;
+    }
 }

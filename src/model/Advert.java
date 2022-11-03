@@ -1,12 +1,14 @@
 package model;
 
+import java.time.LocalDate;
+
 public abstract class Advert
 {
-
+    private int ID;
     private Seller seller;
-
+    private int endDate; // 0 for no auction; YYYYMMDD for auction
     private String make, model;
-    private int year, displacement, hp, torque, startPrice, buyPrice,ID;
+    private int year, displacement, hp, torque, startPrice, buyPrice;
     private boolean used, automaticGearbox;
 
     public int getStartPrice() {
@@ -33,7 +35,7 @@ public abstract class Advert
         this.ID = ID;
     }
 
-    public Advert(String make, String model, int year, int displacement, int hp, int torque, boolean used, boolean automaticGearbox) {
+    public Advert(int endDate, String make, String model, int year, int displacement, int hp, int torque, boolean used, boolean automaticGearbox) {
 
         this.make = make;
         this.model = model;
@@ -43,7 +45,24 @@ public abstract class Advert
         this.automaticGearbox = automaticGearbox;
         this.hp = hp;
         this.torque = torque;
+        this.endDate = endDate;
         this.ID=-1;
+    }
+
+    public Seller getSeller() {
+        return seller;
+    }
+
+    public void setSeller(Seller seller) {
+        this.seller = seller;
+    }
+
+    public int getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(int endDate) {
+        this.endDate = endDate;
     }
 
     public boolean isAutomaticGearbox() {

@@ -45,4 +45,9 @@ public class InMemoryCarRepository implements AdsRepository {
         }
         return null;
     }
+
+    @Override
+    public List<Advert> findAll() {
+        return advertList;
+    }
 }
