@@ -9,4 +9,5 @@ public interface ICrudRepository<ID, E>
     void update(ID id, E e); // change the element with the given id to the given element
     E findId(ID id); // finds the element with the given id
     List<E> findAll(); // returns entire list
+
 }

@@ -37,6 +37,7 @@ public class Controller
         return 0;
     }
 
+
     void sellCar(Advert e) // aka place advert
     {
         // business logic daca mai trebuie punem aici
@@ -48,6 +49,7 @@ public class Controller
         //TODO de verificat sa nu fi trecut termenul licitatiei inainte de a plasa bid-ul
         if(adsRepository.findId(t.getAd().getBuyPrice()) != null) // the ad on which it is bid should still exist
             transactionRepository.add(t);
+
 
     }
 
