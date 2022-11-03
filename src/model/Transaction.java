@@ -5,13 +5,15 @@ public class Transaction
     private int id;
     private Buyer buyer;
     private Seller seller;
+    private Advert ad;
     private int amount, date; // YYYYMMDD
     private boolean bid;
 
-    public Transaction(Buyer buyer, Seller seller, int amount, int date, boolean bid) {
-        this.id = -1;
+    public Transaction(int id, Buyer buyer, Seller seller, Advert ad, int amount, int date, boolean bid) {
+        this.id = id;
         this.buyer = buyer;
         this.seller = seller;
+        this.ad = ad;
         this.amount = amount;
         this.date = date;
         this.bid = bid;
@@ -19,6 +21,14 @@ public class Transaction
 
     public int getId() {
         return id;
+    }
+
+    public Advert getAd() {
+        return ad;
+    }
+
+    public void setAd(Advert ad) {
+        this.ad = ad;
     }
 
     public void setId(int id) {

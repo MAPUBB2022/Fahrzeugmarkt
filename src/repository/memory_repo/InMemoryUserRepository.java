@@ -75,6 +75,11 @@ public class InMemoryUserRepository implements UserRepository
         return null;
     }
 
+    @Override
+    public List<User> findAll() {
+        return allUsers;
+    }
+
 
     @Override
     public User findByUserAnsPass(String username, String password)
