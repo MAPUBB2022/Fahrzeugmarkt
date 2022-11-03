@@ -8,7 +8,7 @@ import java.util.Scanner;
 
 public class View {
     private Controller controller;
-    private InMemoryUserRepository inMemoryUserRepository;
+
     private int userMode;
 
     public View() {
@@ -25,16 +25,16 @@ public class View {
         System.out.println("Enter password:");
         String password=myObj.nextLine();
 
-        User user= inMemoryUserRepository.findByUserAnsPass(username,password);
-        if (user instanceof Buyer){
-            userMode = 1;
-        }
-        if(user instanceof Seller) {
-            userMode = 2;
-        }
-        else {
-            userMode=0;//Admin
-        }
+        userMode = controller.checkCreds(username,password);
+//        if (user instanceof Buyer){
+//            userMode = 1;
+//        }
+//        if(user instanceof Seller) {
+//            userMode = 2;
+//        }
+//        else {
+//            userMode=0;//Admin
+//        }
 
 
     }
@@ -90,17 +90,18 @@ public class View {
         System.out.println("automatic gearbox:");
         boolean automaticGearbox= Boolean.parseBoolean(myObj.nextLine());
 
+        int endDate = 0;
 
         if(is_Car){
             int nrDoors=Integer.parseInt(myObj.nextLine());
             int nrSeats=Integer.parseInt(myObj.nextLine());
-            a = new Car(make, model, year,displacement,hp,torque,used,automaticGearbox,nrDoors,nrSeats);
+            a = new Car(endDate, make, model, year,displacement,hp,torque,used,automaticGearbox,nrDoors,nrSeats);
         }
         else
         {
             String suspensionType = myObj.nextLine();
             String brakeType = myObj.nextLine();
-            a = new Motorcycle(make, model, year,displacement,hp,torque,used,automaticGearbox,suspensionType,brakeType);
+            a = new Motorcycle(endDate, make, model, year,displacement,hp,torque,used,automaticGearbox,suspensionType,brakeType);
         }
         return a;
     }

@@ -5,8 +5,8 @@ public class Motorcycle extends Advert
     private String suspensionType, brakeType;
 
 
-    public Motorcycle(String make, String model, int year, int displacement, int hp, int torque, boolean used, boolean automaticGearbox, String suspensionType, String brakeType) {
-        super(make, model, year, displacement, hp, torque, used, automaticGearbox);
+    public Motorcycle(int endDate, String make, String model, int year, int displacement, int hp, int torque, boolean used, boolean automaticGearbox, String suspensionType, String brakeType) {
+        super(endDate, make, model, year, displacement, hp, torque, used, automaticGearbox);
         this.brakeType = brakeType;
         this.suspensionType = suspensionType;
     }
