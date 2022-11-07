@@ -1,22 +1,26 @@
 package model;
 
+import java.time.LocalDate;
+
 public class Transaction
 {
     private int id;
     private Buyer buyer;
     private Seller seller;
     private Advert ad;
-    private int amount, date; // YYYYMMDD
+    private int amount;
+    private LocalDate date; // YYYYMMDD
     private boolean bid;
 
-    public Transaction(int id, Buyer buyer, Seller seller, Advert ad, int amount, int date, boolean bid) {
+    public Transaction(int id, Buyer buyer, Seller seller, Advert ad, int amount, boolean bid) {
         this.id = id;
         this.buyer = buyer;
         this.seller = seller;
         this.ad = ad;
         this.amount = amount;
-        this.date = date;
         this.bid = bid;
+        ///////////////
+        this.date = LocalDate.now();
     }
 
     public int getId() {
@@ -59,12 +63,8 @@ public class Transaction
         this.amount = amount;
     }
 
-    public int getDate() {
+    public LocalDate getDate() {
         return date;
-    }
-
-    public void setDate(int date) {
-        this.date = date;
     }
 
     public boolean isBid() {

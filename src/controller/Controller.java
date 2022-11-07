@@ -4,29 +4,21 @@ import model.*;
 import repository.AdsRepository;
 import repository.TransactionRepository;
 import repository.UserRepository;
-import repository.memory_repo.InMemoryCarRepository;
-import repository.memory_repo.InMemoryTransactionRepository;
-import repository.memory_repo.InMemoryUserRepository;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.Year;
 
 public class Controller
 {
     private UserRepository userRepository;
     private AdsRepository adsRepository;
-
     private TransactionRepository transactionRepository;
-
-    // toate functiile userilor aici; in view facem trierea dupa tipul de user
-    public Controller() {
-        this.userRepository = new InMemoryUserRepository();
-        this.adsRepository = new InMemoryCarRepository();
-        this.transactionRepository = new InMemoryTransactionRepository();
+    public Controller(UserRepository userRepository, AdsRepository adsRepository, TransactionRepository transactionRepository) {
+        this.userRepository = userRepository;
+        this.adsRepository = adsRepository;
+        this.transactionRepository = transactionRepository;
     }
-
-    // toate functiile userilor aici; in view facem trierea dupa felul de user
-
     public int checkCreds(String user, String pass)
     {
         User u = userRepository.findByUserAnsPass(user, pass);
@@ -37,48 +29,29 @@ public class Controller
         return 0;
     }
 
+    // TODO check for elapsed auctions and confront the seller with the final offer, should there be one
+    // TODO check for ads older than one month and confront the seller with the final offer, should there be one
 
     void sellCar(Advert e) // aka place advert
     {
         // business logic daca mai trebuie punem aici
-        adsRepository.add(e);
+        int year = Year.now().getValue();
+        if(e.getYear() > 1980 & e.getYear() <= year+1) // car must be newer than 1980 and not from the future (1 year in the future is allowed e.g. 2023 Chevy Corvette C8 Z06)
+            adsRepository.add(e);
     }
 
     void placeBid(Transaction t)
     {
-        //TODO de verificat sa nu fi trecut termenul licitatiei inainte de a plasa bid-ul
-        if(adsRepository.findId(t.getAd().getBuyPrice()) != null) // the ad on which it is bid should still exist
+        long daysBetween = Duration.between(t.getAd().getPlaceDate(), LocalDate.now()).toDays(); // how many days since ad posted
+        if(adsRepository.findId(t.getAd().getBuyPrice()) != null && daysBetween <= t.getAd().getAuctionDays())
+            // the ad on which it is bid should still exist and the auction should still be ongoing (not more than auctionDays days should have elapsed)
             transactionRepository.add(t);
-
-
-    }
-
-    List<Advert> getAllAdsFromSeller(Seller s)
-    {
-        List<Advert> allAds = adsRepository.findAll();
-        List<Advert> result = new ArrayList<>();
-        for (Advert ad : allAds)
-        {
-            if (ad.getSeller() == s)
-                result.add(ad);
-        }
-        return result;
     }
 
     void buyUpfront(Transaction t)
     {
         if(adsRepository.findId(t.getAd().getBuyPrice()) != null) // the ad on which it is bid should still exist
             transactionRepository.add(t);
-    }
-
-    List<Advert> getAllAds()
-    {
-        return adsRepository.findAll();
-    }
-
-    Advert getAdByID(int id)
-    {
-        return adsRepository.findId(id);
     }
 
     void denyTransaction(Transaction t) // the seller doesn't accept the buy offer / the highest bid => the transaction gets deleted

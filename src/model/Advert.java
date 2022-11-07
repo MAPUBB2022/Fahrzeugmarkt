@@ -6,7 +6,8 @@ public abstract class Advert
 {
     private int ID;
     private Seller seller;
-    private int endDate; // 0 for no auction; YYYYMMDD for auction
+    LocalDate placeDate; // date when the ad was put up
+    private int auctionDays; // 0 for no auction; YYYYMMDD for auction
     private String make, model;
     private int year, displacement, hp, torque, startPrice, buyPrice;
     private boolean used, automaticGearbox;
@@ -35,7 +36,7 @@ public abstract class Advert
         this.ID = ID;
     }
 
-    public Advert(int endDate, String make, String model, int year, int displacement, int hp, int torque, boolean used, boolean automaticGearbox) {
+    public Advert(int auctionDays, String make, String model, int year, int displacement, int hp, int torque, boolean used, boolean automaticGearbox) {
 
         this.make = make;
         this.model = model;
@@ -45,7 +46,9 @@ public abstract class Advert
         this.automaticGearbox = automaticGearbox;
         this.hp = hp;
         this.torque = torque;
-        this.endDate = endDate;
+        this.auctionDays = auctionDays;
+        /////////////////
+        placeDate = LocalDate.now();
         this.ID=-1;
     }
 
@@ -57,12 +60,20 @@ public abstract class Advert
         this.seller = seller;
     }
 
-    public int getEndDate() {
-        return endDate;
+    public LocalDate getPlaceDate() {
+        return placeDate;
     }
 
-    public void setEndDate(int endDate) {
-        this.endDate = endDate;
+    public void setPlaceDate(LocalDate placeDate) {
+        this.placeDate = placeDate;
+    }
+
+    public int getAuctionDays() {
+        return auctionDays;
+    }
+
+    public void setAuctionDays(int auctionDays) {
+        this.auctionDays = auctionDays;
     }
 
     public boolean isAutomaticGearbox() {

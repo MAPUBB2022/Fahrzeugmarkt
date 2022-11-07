@@ -1,9 +1,11 @@
 package repository.memory_repo;
 
 import model.Advert;
+import model.Seller;
 import model.User;
 import repository.AdsRepository;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,6 +14,28 @@ public class InMemoryCarRepository implements AdsRepository {
     private int currentID = 0;
     public InMemoryCarRepository() {
         this.advertList = new ArrayList<>();
+    }
+    @Override
+    public List<Advert> getAllAdsFromSeller(Seller s)
+    {
+        List<Advert> result = new ArrayList<>();
+        for (Advert ad : advertList)
+        {
+            if (ad.getSeller().getUsername().equals(s.getUsername()))
+                result.add(ad);
+        }
+        return result;
+    }
+
+    @Override
+    public List<Advert> getAllAdsFromToday() {
+        List<Advert> result = new ArrayList<>();
+        for (Advert ad : advertList)
+        {
+            if (ad.getPlaceDate().compareTo(LocalDate.now()) == 0)
+                result.add(ad);
+        }
+        return result;
     }
 
     @Override

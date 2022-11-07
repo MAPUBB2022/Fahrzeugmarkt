@@ -2,48 +2,48 @@ package view;
 
 import controller.Controller;
 import model.*;
-import repository.memory_repo.InMemoryUserRepository;
+import repository.AdsRepository;
+import repository.TransactionRepository;
+import repository.UserRepository;
 
 import java.util.Scanner;
 
 public class View {
     private Controller controller;
-
+    private UserRepository userRepository;
+    private AdsRepository adsRepository;
+    private TransactionRepository transactionRepository;
     private int userMode;
 
-    public View() {
-        this.controller = new Controller();
-        userMode = -1;
+    public View(Controller controller, UserRepository userRepository, AdsRepository adsRepository, TransactionRepository transactionRepository) {
+        this.controller = controller;
+        this.userRepository = userRepository;
+        this.adsRepository = adsRepository;
+        this.transactionRepository = transactionRepository;
+        this.userMode = -1;
     }
 
     public void login()
     {
         Scanner myObj = new Scanner(System.in);
-        System.out.println("Enter username:");
+        System.out.println("Enter username: ");
         String username=myObj.nextLine();
 
-        System.out.println("Enter password:");
+        System.out.println("Enter password: ");
         String password=myObj.nextLine();
 
         userMode = controller.checkCreds(username,password);
-//        if (user instanceof Buyer){
-//            userMode = 1;
-//        }
-//        if(user instanceof Seller) {
-//            userMode = 2;
-//        }
-//        else {
-//            userMode=0;//Admin
-//        }
-
-
     }
 
     public void mainMenu()
     {
         while (true) {
             if (userMode == -1)
+            {
+                System.out.println("Login failed! Try again");
                 login();
+            }
+
             if(userMode==0)//Admin
             {
 
