@@ -36,7 +36,7 @@ public abstract class Advert
         this.ID = ID;
     }
 
-    public Advert(int auctionDays, String make, String model, int year, int displacement, int hp, int torque, boolean used, boolean automaticGearbox) {
+    public Advert(int auctionDays, String make, String model, int year, int displacement, int hp, int torque, boolean used, boolean automaticGearbox, int buyPrice, int startPrice) {
 
         this.make = make;
         this.model = model;
@@ -47,6 +47,8 @@ public abstract class Advert
         this.hp = hp;
         this.torque = torque;
         this.auctionDays = auctionDays;
+        this.buyPrice = buyPrice;
+        this.startPrice = startPrice;
         /////////////////
         placeDate = LocalDate.now();
         this.ID=-1;
