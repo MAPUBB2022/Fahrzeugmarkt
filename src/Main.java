@@ -17,7 +17,7 @@ public class Main {
         Controller controller = new Controller(userRepository, adsRepository, transactionRepository);
         View view = new View(controller, userRepository, adsRepository, transactionRepository);
 
-        view.login();
+
         view.mainMenu();
         view.createAd();
     }

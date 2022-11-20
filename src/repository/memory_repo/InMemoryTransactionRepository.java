@@ -37,6 +37,7 @@ public class InMemoryTransactionRepository implements TransactionRepository
         Transaction t = findId(id);
         if(t!=null)
         {
+            newTransaction.setId(id);
             transactionList.set(transactionList.indexOf(t), newTransaction);
         }
     }

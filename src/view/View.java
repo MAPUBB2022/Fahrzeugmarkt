@@ -51,12 +51,12 @@ public class View {
     {
         Scanner myObj = new Scanner(System.in);
         System.out.println("Enter username: ");
-        String username=myObj.nextLine();
+        String username = myObj.nextLine();
 
         System.out.println("Enter password: ");
-        String password=myObj.nextLine();
+        String password = myObj.nextLine();
 
-        userMode = controller.checkCreds(username,password);
+        userMode = controller.checkCreds(username, password);
     }
 
     public void mainMenu()
@@ -64,8 +64,11 @@ public class View {
         while (true) {
             if (userMode == -1)
             {
-                System.out.println("Login failed! Try again");
                 login();
+                if(userMode!=-1)
+                    continue;
+                else
+                    System.out.println("Login failed! Try again");
             }
 
             if(userMode==0)//Admin
@@ -92,7 +95,8 @@ public class View {
                 else
                     System.out.print("Invalid selection. Please try again");
             }
-            if(userMode==2){//Seller
+            if(userMode==2)
+            {//Seller
 
             }
 

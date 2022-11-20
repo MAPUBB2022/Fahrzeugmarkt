@@ -58,6 +58,7 @@ public class InMemoryUserRepository implements UserRepository
         User u = findId(username);
         if(u!=null)
         {
+            newUser.setUsername(username);
             allUsers.set(allUsers.indexOf(u), newUser);
         }
     }

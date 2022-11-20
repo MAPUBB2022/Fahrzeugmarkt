@@ -26,7 +26,9 @@ public class Controller
             return 1;
         if(u instanceof Seller)
             return 2;
-        return 0;
+        if(u instanceof Admin)
+            return 0;
+        return -1;
     }
 
     // TODO check for elapsed auctions and confront the seller with the final offer, should there be one
