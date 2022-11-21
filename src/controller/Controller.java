@@ -28,8 +28,8 @@ public class Controller
         userRepository.add(new Seller("veriku","iazivericule","Pitesti, AG"));
         userRepository.add(new Admin("vincenzo","gen","pe Italia"));
 
-        Advert a = new Car((Seller) userRepository.findId("veriku"), 20, "VW", "Taigo", 2022, 1499, 150, 200, false, false, 5, 4,23000, 6000);
-        Advert b = new Car((Seller) userRepository.findId("veriku"), 20, "VW", "Passat", 2012, 1999, 150, 200, false, false, 5, 4, 11000, 3000);
+        Advert a = new Car((Seller) userRepository.findId("veriku"), 0, "VW", "Taigo", 2022, 1499, 150, 200, false, false, 5, 4,23000, 0);
+        Advert b = new Car((Seller) userRepository.findId("veriku"), 7, "VW", "Passat", 2012, 1999, 150, 200, false, false, 5, 4, 11000, 3000);
         Advert c = new Car((Seller) userRepository.findId("veriku"), 20, "Dacia", "Papuc", 2000, 1299, 150, 200, false, false, 5, 4, 4000, 800);
         adsRepository.add(a);
         adsRepository.add(b);
@@ -45,15 +45,25 @@ public class Controller
         return u;
     }
 
-    public int getCurrentBid(Advert advert)
+    public Transaction getCurrentBid(Advert advert)
     {
         int currentAmount = advert.getStartPrice();
+        Transaction transaction = null;
         for (Transaction t: transactionRepository.getTransactionsByCar(advert) )
         {
             if(t.isBid() && t.getAmount() > currentAmount)
+            {
                 currentAmount = t.getAmount();
+                transaction = t;
+            }
+
         }
-        return currentAmount;
+        return transaction;
+    }
+
+    public LocalDate getAuctionEndDate(Advert advert)
+    {
+        return advert.getPlaceDate().plusDays(advert.getAuctionDays());
     }
 
     // TODO check for elapsed auctions and confront the seller with the final offer, should there be one

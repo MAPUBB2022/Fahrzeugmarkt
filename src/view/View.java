@@ -61,7 +61,13 @@ public class View {
 
         System.out.printf("%s %s %s; %s Euro\n", advert.getMake(), advert.getModel(), advert.getYear(),advert.getBuyPrice());
     }
-
+    private void printTransaction(Transaction transaction)
+    {
+        if(transaction.isBid())
+            System.out.printf("\t%s, %s: bid %s Euro\n", transaction.getBuyer().getUsername(), transaction.getDate(), transaction.getAmount());
+        else
+            System.out.printf("\t%s, %s: bought with %s Euro\n", transaction.getBuyer().getUsername(), transaction.getDate(), transaction.getAmount());
+    }
     public void login()
     {
         Scanner myObj = new Scanner(System.in);
@@ -100,7 +106,11 @@ public class View {
                 //present ad in a detailed fashion
                 Advert currentAd = adList.get(globalCounter+conve-1);
                 printAd(currentAd);
-                System.out.printf("\nThe current bid on this Advert is %s Euro\n", controller.getCurrentBid(currentAd));
+                Transaction currentBid =  controller.getCurrentBid(currentAd);
+                if(currentBid !=null)
+                    System.out.printf("\nThe current bid on this Advert is %s Euro\n", currentBid.getAmount());
+                else
+                    System.out.print("\nThere are no bids on this Advert\n");
                 System.out.println("What would you like to do: \n1. Place a bid\n2. Buy the car\n\nChoose an option (1-2): ");
                 int opt = myObj.nextInt();
                 if(opt==1)
@@ -127,13 +137,30 @@ public class View {
         for (Advert a: adList )
         {
             printAdSummary(a);
-            System.out.printf("\tCurrent bid: %s\n\n", controller.getCurrentBid(a));
+            Transaction currentBid = controller.getCurrentBid(a);
+            if(currentBid != null)
+                System.out.printf("\tCurrent bid: %s\n\n", currentBid.getAmount());
+            else
+                System.out.print("\tThere is currently no bid\n\n");
         }
     }
 
-    private void presentTransactions(List<Transaction> transactions)
+    private void presentTransactions()
     {
-
+        List<Advert> adverts = adsRepository.getAllAdsFromSeller((Seller) loggedUser);
+        for (Advert a:adverts)
+        {
+            printAdSummary(a);
+            Transaction transaction = controller.getCurrentBid(a);
+            if(a.getAuctionDays() > 0)
+                System.out.printf("\tAuction will end on %s\n", controller.getAuctionEndDate(a));
+            else
+                System.out.print("\tThis is not an auction\n");
+            if(transaction == null)
+                System.out.println("\tNo bids or buy offers on this advert.\n");
+            else
+                printTransaction(transaction);
+        }
     }
 
     public void mainMenu()
@@ -188,7 +215,7 @@ public class View {
                 else if (op == 3)
                 {
                     System.out.println("\nYour pending transactions:\n");
-                    presentTransactions(transactionRepository.getTransactionsBySeller((Seller) loggedUser));
+                    presentTransactions();
                 }
                 else
                     System.out.print("Invalid selection. Please try again");
@@ -227,10 +254,10 @@ public class View {
         System.out.println("automatic gearbox:");
         boolean automaticGearbox= Boolean.parseBoolean(myObj.nextLine());
 
-        System.out.println("automatic gearbox:");
+        System.out.println("buy price:");
         int buyPrice = Integer.parseInt(myObj.nextLine());
 
-        System.out.println("automatic gearbox:");
+        System.out.println("auction start price:");
         int startPrice = Integer.parseInt(myObj.nextLine());
 
         int endDate = 0; //  TODO nu e bine
