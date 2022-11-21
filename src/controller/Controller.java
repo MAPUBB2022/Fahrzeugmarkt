@@ -18,23 +18,48 @@ public class Controller
         this.userRepository = userRepository;
         this.adsRepository = adsRepository;
         this.transactionRepository = transactionRepository;
+        populate();
     }
-    public int checkCreds(String user, String pass)
+
+    private void populate()
+    {
+        userRepository.add(new Buyer("andreigali","42069","Cristian, BV"));
+        userRepository.add(new Buyer("iordache","melissa","Brasov, BV"));
+        userRepository.add(new Seller("veriku","iazivericule","Pitesti, AG"));
+        userRepository.add(new Admin("vincenzo","gen","pe Italia"));
+
+        Advert a = new Car((Seller) userRepository.findId("veriku"), 20, "VW", "Taigo", 2022, 1499, 150, 200, false, false, 5, 4,23000, 6000);
+        Advert b = new Car((Seller) userRepository.findId("veriku"), 20, "VW", "Passat", 2012, 1999, 150, 200, false, false, 5, 4, 11000, 3000);
+        Advert c = new Car((Seller) userRepository.findId("veriku"), 20, "Dacia", "Papuc", 2000, 1299, 150, 200, false, false, 5, 4, 4000, 800);
+        adsRepository.add(a);
+        adsRepository.add(b);
+        adsRepository.add(c);
+
+        Transaction transaction = new Transaction((Buyer) userRepository.findId("iordache"), adsRepository.findId(2), 1020, true);
+        transactionRepository.add(transaction);
+    }
+
+    public User checkCreds(String user, String pass)
     {
         User u = userRepository.findByUserAnsPass(user, pass);
-        if(u instanceof Buyer)
-            return 1;
-        if(u instanceof Seller)
-            return 2;
-        if(u instanceof Admin)
-            return 0;
-        return -1;
+        return u;
+    }
+
+    public int getCurrentBid(Advert advert)
+    {
+        int currentAmount = advert.getStartPrice();
+        for (Transaction t: transactionRepository.getTransactionsByCar(advert) )
+        {
+            if(t.isBid() && t.getAmount() > currentAmount)
+                currentAmount = t.getAmount();
+        }
+        return currentAmount;
     }
 
     // TODO check for elapsed auctions and confront the seller with the final offer, should there be one
     // TODO check for ads older than one month and confront the seller with the final offer, should there be one
 
-    void sellCar(Advert e) // aka place advert
+    public void sellCar(Advert e) // aka place advert
     {
         // business logic daca mai trebuie punem aici
         int year = Year.now().getValue();
@@ -42,26 +67,26 @@ public class Controller
             adsRepository.add(e);
     }
 
-    void placeBid(Transaction t)
+    public void placeBid(Transaction t)
     {
-        long daysBetween = Duration.between(t.getAd().getPlaceDate(), LocalDate.now()).toDays(); // how many days since ad posted
-        if(adsRepository.findId(t.getAd().getBuyPrice()) != null && daysBetween <= t.getAd().getAuctionDays())
+        long daysBetween = Duration.between(t.getAd().getPlaceDate().atStartOfDay(), LocalDate.now().atStartOfDay()).toDays(); // how many days since ad posted
+        if(adsRepository.findId(t.getAd().getID()) != null && daysBetween <= t.getAd().getAuctionDays())
             // the ad on which it is bid should still exist and the auction should still be ongoing (not more than auctionDays days should have elapsed)
             transactionRepository.add(t);
     }
 
-    void buyUpfront(Transaction t)
+    public void buyUpfront(Transaction t)
     {
         if(adsRepository.findId(t.getAd().getBuyPrice()) != null) // the ad on which it is bid should still exist
             transactionRepository.add(t);
     }
 
-    void denyTransaction(Transaction t) // the seller doesn't accept the buy offer / the highest bid => the transaction gets deleted
+    public void denyTransaction(Transaction t) // the seller doesn't accept the buy offer / the highest bid => the transaction gets deleted
     {
         transactionRepository.delete(t.getId());
     }
 
-    void acceptTransaction(Transaction t) // the seller accepts the buy offer / the highest bid => the transaction and ad get deleted
+    public void acceptTransaction(Transaction t) // the seller accepts the buy offer / the highest bid => the transaction and ad get deleted
     {
         adsRepository.delete(t.getAd().getID()); // car is sold => no longer available on the site
         transactionRepository.delete(t.getId()); // car no longer available => transaction references non-existent car and is deleted

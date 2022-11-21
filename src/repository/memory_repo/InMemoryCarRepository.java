@@ -13,18 +13,9 @@ import java.util.List;
 public class InMemoryCarRepository implements AdsRepository {
     private List<Advert> advertList;
     private int currentID = 0;
-    private void populate()
-    {
-        Advert a = new Car(20, "VW", "Taigo", 2022, 1499, 150, 200, false, false, 5, 4,23000, 6000);
-        Advert b = new Car(20, "VW", "Passat", 2012, 1999, 150, 200, false, false, 5, 4, 11000, 3000);
-        Advert c = new Car(20, "Dacia", "Papuc", 2000, 1299, 150, 200, false, false, 5, 4, 4000, 800);
-        this.add(a);
-        this.add(b);
-        this.add(c);
-    }
+
     public InMemoryCarRepository() {
         this.advertList = new ArrayList<>();
-        populate();
     }
     @Override
     public List<Advert> getAllAdsFromSeller(Seller s)

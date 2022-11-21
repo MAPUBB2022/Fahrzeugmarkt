@@ -3,8 +3,8 @@ package model;
 public class Car extends Advert {
     private int nrDoors, nrSeats;
 
-    public Car(int auctionDays, String make, String model, int year, int displacement, int hp, int torque, boolean used, boolean automaticGearbox, int nrDoors, int nrSeats, int buyPrice, int startPrice) {
-        super(auctionDays, make, model, year, displacement, hp, torque, used, automaticGearbox, buyPrice, startPrice);
+    public Car(Seller seller, int auctionDays, String make, String model, int year, int displacement, int hp, int torque, boolean used, boolean automaticGearbox, int nrDoors, int nrSeats, int buyPrice, int startPrice) {
+        super(seller, auctionDays, make, model, year, displacement, hp, torque, used, automaticGearbox, buyPrice, startPrice);
         this.nrDoors = nrDoors;
         this.nrSeats = nrSeats;
     }

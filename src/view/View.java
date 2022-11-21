@@ -6,6 +6,8 @@ import repository.AdsRepository;
 import repository.TransactionRepository;
 import repository.UserRepository;
 
+import java.util.List;
+import java.util.Objects;
 import java.util.Scanner;
 
 public class View {
@@ -13,14 +15,16 @@ public class View {
     private UserRepository userRepository;
     private AdsRepository adsRepository;
     private TransactionRepository transactionRepository;
-    private int userMode;
+
+    private User loggedUser;
 
     public View(Controller controller, UserRepository userRepository, AdsRepository adsRepository, TransactionRepository transactionRepository) {
         this.controller = controller;
         this.userRepository = userRepository;
         this.adsRepository = adsRepository;
         this.transactionRepository = transactionRepository;
-        this.userMode = -1;
+        //////////////////////////////
+        this.loggedUser = null;
     }
 
     private void printAd(Advert advert)
@@ -44,7 +48,18 @@ public class View {
         System.out.printf("Created:\t%s\nDays:\t%s\n", advert.getPlaceDate(), advert.getAuctionDays());
         System.out.printf("Start Price:\t%s\nBuy Price:\t%s\n", advert.getStartPrice(), advert.getBuyPrice());
 
+        // TODO UNFINISHED
+    }
 
+    private void printAdSummary(Advert advert)
+    {
+        if(advert instanceof Car)
+            System.out.print("Car\t");
+
+        if(advert instanceof Motorcycle)
+            System.out.print("Motorcycle\t");
+
+        System.out.printf("%s %s %s; %s Euro\n", advert.getMake(), advert.getModel(), advert.getYear(),advert.getBuyPrice());
     }
 
     public void login()
@@ -56,54 +71,132 @@ public class View {
         System.out.println("Enter password: ");
         String password = myObj.nextLine();
 
-        userMode = controller.checkCreds(username, password);
+        loggedUser = controller.checkCreds(username, password);
     }
 
-    public void mainMenu()
+    private void presentAdsBuyer(List<Advert> adList)
     {
-        while (true) {
-            if (userMode == -1)
+        int globalCounter=0;
+        int i=0;
+        while(globalCounter<adList.size())
+        {
+            for(i=0; i<10 && i+globalCounter < adList.size(); i++) // "Page size" is 10
             {
-                login();
-                if(userMode!=-1)
-                    continue;
-                else
-                    System.out.println("Login failed! Try again");
+                System.out.printf("%d\t", i+1);
+                printAdSummary(adList.get(globalCounter+i));
             }
+            System.out.printf("Select a car (1-%s) or press enter to see the next page: ",i);
 
-            if(userMode==0)//Admin
+            Scanner myObj = new Scanner(System.in);  // Create a Scanner object
+            String userInput = myObj.nextLine();
+            if(Objects.equals(userInput, ""))
             {
-
-
+                globalCounter+=i;
+                continue;
             }
-            if(userMode==1){//Buyer
-                System.out.print("\n\nHello Buyer\n\nWhat do you want to do?\n\n1. See all ads from today\n2. See all ads\n\n Choose an option (1-2): ");
-                Scanner myObj = new Scanner(System.in);
-                int op = myObj.nextInt();
-                if(op == 1)
+            int conve = Integer.parseInt(userInput);
+            if(conve>=1 && conve<=10)
+            {
+                //present ad in a detailed fashion
+                Advert currentAd = adList.get(globalCounter+conve-1);
+                printAd(currentAd);
+                System.out.printf("\nThe current bid on this Advert is %s Euro\n", controller.getCurrentBid(currentAd));
+                System.out.println("What would you like to do: \n1. Place a bid\n2. Buy the car\n\nChoose an option (1-2): ");
+                int opt = myObj.nextInt();
+                if(opt==1)
                 {
-                    for (Advert a: adsRepository.getAllAdsFromToday() ) {
-                        printAd(a);
-                    }
+                    System.out.println("How much would you like to bid? ");
+                    int amount = myObj.nextInt();
+                    Transaction transaction = new Transaction((Buyer) loggedUser, currentAd, amount, true);
+                    controller.placeBid(transaction);
                 }
-                else if (op == 2)
+                else if (opt==2)
                 {
-                    for (Advert a: adsRepository.findAll() ) {
-                        printAd(a);
-                    }
+                    Transaction transaction = new Transaction((Buyer) loggedUser, currentAd, currentAd.getBuyPrice(), false);
+                    controller.buyUpfront(transaction);
+                    System.out.println("Transaction completed successfully!");
                 }
-                else
-                    System.out.print("Invalid selection. Please try again");
-            }
-            if(userMode==2)
-            {//Seller
-
+                break;
             }
 
         }
     }
 
-    public Advert createAd(){
+    private void presentAdsSeller(List<Advert> adList)
+    {
+        for (Advert a: adList )
+        {
+            printAdSummary(a);
+            System.out.printf("\tCurrent bid: %s\n\n", controller.getCurrentBid(a));
+        }
+    }
+
+    private void presentTransactions(List<Transaction> transactions)
+    {
+
+    }
+
+    public void mainMenu()
+    {
+        while (true) {
+            if (loggedUser == null)
+            {
+                login();
+                if(loggedUser != null)
+                    continue;
+                else
+                    System.out.println("Login failed! Try again");
+            }
+
+            if(loggedUser instanceof Admin)//Admin
+            {
+                // TODO
+
+            }
+            if(loggedUser instanceof Buyer)
+            {
+                System.out.print("\n\nHello Buyer\n\nWhat do you want to do?\n\n1. See all ads from today\n2. See all ads\n\n Choose an option (1-2): ");
+                Scanner myObj = new Scanner(System.in);
+                int op = myObj.nextInt();
+                if(op == 1)
+                {
+                    System.out.println("\nCars listed today:\n");
+                    presentAdsBuyer(adsRepository.getAllAdsFromToday());
+                }
+                else if (op == 2)
+                {
+                    System.out.println("\nComplete car list:\n");
+                    presentAdsBuyer(adsRepository.findAll());
+                }
+                else
+                    System.out.print("Invalid selection. Please try again");
+            }
+            if(loggedUser instanceof Seller)
+            {
+                System.out.print("\n\nHello Seller\n\nWhat do you want to do?\n\n1. Create an advert\n2. See your adverts\n3. See pending transactions\n\n Choose an option (1-3): ");
+                Scanner myObj = new Scanner(System.in);
+                int op = myObj.nextInt();
+                if(op == 1)
+                {
+                    createAd();
+                }
+                else if (op == 2)
+                {
+                    System.out.println("\nYour adverts:\n");
+                    presentAdsSeller(adsRepository.getAllAdsFromSeller((Seller) loggedUser));
+                }
+                else if (op == 3)
+                {
+                    System.out.println("\nYour pending transactions:\n");
+                    presentTransactions(transactionRepository.getTransactionsBySeller((Seller) loggedUser));
+                }
+                else
+                    System.out.print("Invalid selection. Please try again");
+            }
+        }
+    }
+
+    public void createAd(){
         boolean is_Car;
         Advert a;
         Scanner myObj = new Scanner(System.in);  // Create a Scanner object
@@ -140,14 +233,14 @@ public class View {
         System.out.println("automatic gearbox:");
         int startPrice = Integer.parseInt(myObj.nextLine());
 
-        int endDate = 0;
+        int endDate = 0; //  TODO nu e bine
 
         if(is_Car){
             System.out.println("Number of doors:");
             int nrDoors=Integer.parseInt(myObj.nextLine());
             System.out.println("Number of seats:");
             int nrSeats=Integer.parseInt(myObj.nextLine());
-            a = new Car(endDate, make, model, year,displacement,hp,torque,used,automaticGearbox,nrDoors,nrSeats, buyPrice, startPrice);
+            a = new Car((Seller) loggedUser, endDate, make, model, year,displacement,hp,torque,used,automaticGearbox,nrDoors,nrSeats, buyPrice, startPrice);
         }
         else
         {
@@ -155,9 +248,9 @@ public class View {
             String suspensionType = myObj.nextLine();
             System.out.println("brake type:");
             String brakeType = myObj.nextLine();
-            a = new Motorcycle(endDate, make, model, year,displacement,hp,torque,used,automaticGearbox,suspensionType,brakeType, buyPrice, startPrice);
+            a = new Motorcycle( (Seller) loggedUser, endDate, make, model, year,displacement,hp,torque,used,automaticGearbox,suspensionType,brakeType, buyPrice, startPrice);
         }
-        return a;
+        controller.sellCar(a);
     }
 
 }

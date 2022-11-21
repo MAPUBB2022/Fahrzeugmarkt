@@ -1,5 +1,7 @@
 package repository.memory_repo;
 
+import model.Advert;
+import model.Seller;
 import model.Transaction;
 import model.User;
 import repository.TransactionRepository;
@@ -58,5 +60,33 @@ public class InMemoryTransactionRepository implements TransactionRepository
     @Override
     public List<Transaction> findAll() {
         return transactionList;
+    }
+
+    @Override
+    public List<Transaction> getTransactionsByCar(Advert advert)
+    {
+        List<Transaction> transactions = new ArrayList<>();
+        for(Transaction t: transactionList)
+        {
+            if(t.getAd().getID() == advert.getID())
+            {
+                transactions.add(t);
+            }
+        }
+        return transactions;
+    }
+
+    @Override
+    public List<Transaction> getTransactionsBySeller(Seller seller)
+    {
+        List<Transaction> transactions = new ArrayList<>();
+        for(Transaction t: transactionList)
+        {
+            if(t.getAd().getSeller().getUsername().equals(seller.getUsername()))
+            {
+                transactions.add(t);
+            }
+        }
+        return transactions;
     }
 }

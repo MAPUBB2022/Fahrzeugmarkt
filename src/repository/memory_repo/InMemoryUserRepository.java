@@ -16,15 +16,6 @@ public class InMemoryUserRepository implements UserRepository
     public InMemoryUserRepository()
     {
         this.allUsers = new ArrayList<>();
-        populateUsers();
-    }
-
-    public void populateUsers()
-    {
-        allUsers.add(new Buyer("andreigali","42069","Cristian, BV"));
-        allUsers.add(new Buyer("iordache","melissa","Brasov, BV"));
-        allUsers.add(new Seller("veriku","iazivericule","Pitesti, AG"));
-        allUsers.add(new Admin("vincenzo","gen","pe Italia"));
     }
 
     @Override

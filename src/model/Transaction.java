@@ -6,21 +6,20 @@ public class Transaction
 {
     private int id;
     private Buyer buyer;
-    private Seller seller;
     private Advert ad;
     private int amount;
     private LocalDate date; // YYYYMMDD
     private boolean bid;
 
-    public Transaction(int id, Buyer buyer, Seller seller, Advert ad, int amount, boolean bid) {
-        this.id = id;
+    public Transaction(Buyer buyer, Advert ad, int amount, boolean bid) {
+
         this.buyer = buyer;
-        this.seller = seller;
         this.ad = ad;
         this.amount = amount;
         this.bid = bid;
         ///////////////
         this.date = LocalDate.now();
+        this.id = -1;
     }
 
     public int getId() {
@@ -45,14 +44,6 @@ public class Transaction
 
     public void setBuyer(Buyer buyer) {
         this.buyer = buyer;
-    }
-
-    public Seller getSeller() {
-        return seller;
-    }
-
-    public void setSeller(Seller seller) {
-        this.seller = seller;
     }
 
     public int getAmount() {
