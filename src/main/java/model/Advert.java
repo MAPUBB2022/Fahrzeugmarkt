@@ -1,0 +1,160 @@
+package model;
+
+import javax.persistence.*;
+import java.time.LocalDate;
+@Entity
+public abstract class Advert
+{
+    @Id
+    @GeneratedValue(
+            strategy = GenerationType.IDENTITY
+    )
+    private int ID;
+    @OneToOne(
+            cascade = {CascadeType.ALL}
+    )
+    @JoinColumn(
+            name = "seller_id"
+    )
+    private Seller seller;
+    LocalDate placeDate; // date when the ad was put up
+    private int auctionDays; // 0 for no auction; YYYYMMDD for auction
+    private String make, model;
+    private int year, displacement, hp, torque, startPrice, buyPrice;
+    private boolean used, automaticGearbox;
+
+    public Advert() {
+
+    }
+
+    public int getStartPrice() {
+        return startPrice;
+    }
+
+    public void setStartPrice(int startPrice) {
+        this.startPrice = startPrice;
+    }
+
+    public int getBuyPrice() {
+        return buyPrice;
+    }
+
+    public void setBuyPrice(int buyPrice) {
+        this.buyPrice = buyPrice;
+    }
+
+    public int getID() {
+        return ID;
+    }
+
+    public void setID(int ID) {
+        this.ID = ID;
+    }
+
+    public Advert(Seller seller, int auctionDays, String make, String model, int year, int displacement, int hp, int torque, boolean used, boolean automaticGearbox, int buyPrice, int startPrice)
+    {
+        this.seller = seller;
+        this.make = make;
+        this.model = model;
+        this.year = year;
+        this.displacement = displacement;
+        this.used = used;
+        this.automaticGearbox = automaticGearbox;
+        this.hp = hp;
+        this.torque = torque;
+        this.auctionDays = auctionDays;
+        this.buyPrice = buyPrice;
+        this.startPrice = startPrice;
+        /////////////////
+        placeDate = LocalDate.now();
+        this.ID=-1;
+    }
+
+    public Seller getSeller() {
+        return seller;
+    }
+
+    public void setSeller(Seller seller) {
+        this.seller = seller;
+    }
+
+    public LocalDate getPlaceDate() {
+        return placeDate;
+    }
+
+    public void setPlaceDate(LocalDate placeDate) {
+        this.placeDate = placeDate;
+    }
+
+    public int getAuctionDays() {
+        return auctionDays;
+    }
+
+    public void setAuctionDays(int auctionDays) {
+        this.auctionDays = auctionDays;
+    }
+
+    public boolean isAutomaticGearbox() {
+        return automaticGearbox;
+    }
+
+    public void setAutomaticGearbox(boolean automaticGearbox) {
+        this.automaticGearbox = automaticGearbox;
+    }
+
+    public String getMake() {
+        return make;
+    }
+
+    public void setMake(String make) {
+        this.make = make;
+    }
+
+    public String getModel() {
+        return model;
+    }
+
+    public void setModel(String model) {
+        this.model = model;
+    }
+
+    public int getYear() {
+        return year;
+    }
+
+    public void setYear(int year) {
+        this.year = year;
+    }
+
+    public int getDisplacement() {
+        return displacement;
+    }
+
+    public void setDisplacement(int displacement) {
+        this.displacement = displacement;
+    }
+
+    public boolean isUsed() {
+        return used;
+    }
+
+    public void setUsed(boolean used) {
+        this.used = used;
+    }
+
+    public int getHp() {
+        return hp;
+    }
+
+    public void setHp(int hp) {
+        this.hp = hp;
+    }
+
+    public int getTorque() {
+        return torque;
+    }
+
+    public void setTorque(int torque) {
+        this.torque =torque;
+}
+}
