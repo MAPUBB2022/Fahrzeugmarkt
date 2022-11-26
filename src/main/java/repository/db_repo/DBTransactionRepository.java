@@ -44,10 +44,7 @@ public class DBTransactionRepository implements TransactionRepository
         manager.getTransaction().begin();
         Transaktion a = manager.find(Transaktion.class, id);
 
-        a.setAd(transaktion.getAd());
-        a.setAmount(transaktion.getAmount());
-        a.setBid(transaktion.isBid());
-        a.setBuyer(transaktion.getBuyer());
+        a.update(transaktion);
 
         manager.merge(a); // trebuie?
         manager.getTransaction().commit();

@@ -45,6 +45,14 @@ public class Transaktion
 
     }
 
+    public void update(Transaktion other)
+    {
+        this.setBuyer(other.getBuyer());
+        this.setBid(other.isBid());
+        this.setAmount(other.getAmount());
+        this.setAd(other.getAd());
+    }
+
     public int getId() {
         return id;
     }

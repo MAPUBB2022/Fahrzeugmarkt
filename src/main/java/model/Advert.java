@@ -10,7 +10,7 @@ public abstract class Advert
             strategy = GenerationType.IDENTITY
     )
     private int ID;
-    @OneToOne
+    @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(
             name = "seller_id"
     )
@@ -65,6 +65,33 @@ public abstract class Advert
         this.startPrice = startPrice;
         /////////////////
         placeDate = LocalDate.now();
+    }
+
+    public void update(Advert other)
+    {
+        this.setSeller(other.getSeller());
+        this.setMake(other.getMake());
+        this.setModel(other.getModel());
+        this.setYear(other.getYear());
+        this.setDisplacement(other.getDisplacement());
+        this.setUsed(other.isUsed());
+        this.setAutomaticGearbox(other.isAutomaticGearbox());
+        this.setHp(other.getHp());
+        this.setTorque(other.getTorque());
+        this.setAuctionDays(other.getAuctionDays());
+        this.setStartPrice(other.getStartPrice());
+        this.setBuyPrice(other.getBuyPrice());
+        this.setPlaceDate(other.getPlaceDate());
+        if(this instanceof Car && other instanceof Car)
+        {
+            ((Car) this).setNrDoors(((Car)other).getNrDoors());
+            ((Car) this).setNrSeats(((Car)other).getNrSeats());
+        }
+        else if(this instanceof Motorcycle && other instanceof Motorcycle)
+        {
+            ((Motorcycle) this).setSuspensionType(((Motorcycle)other).getSuspensionType());
+            ((Motorcycle) this).setBrakeType(((Motorcycle)other).getBrakeType());
+        }
     }
 
     public Seller getSeller() {

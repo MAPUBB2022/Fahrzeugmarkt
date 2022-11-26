@@ -67,11 +67,7 @@ public class DBCarRepository implements AdsRepository
         manager.getTransaction().begin();
         Advert a = manager.find(Advert.class, id);
 
-        a.setMake(newAdvert.getMake());
-        a.setModel(newAdvert.getModel());
-        a.setYear(newAdvert.getYear());
-        a.setAuctionDays(newAdvert.getAuctionDays());
-        a.setPlaceDate(newAdvert.getPlaceDate());
+        a.update(newAdvert);
 
         manager.merge(a); // trebuie?
         manager.getTransaction().commit();

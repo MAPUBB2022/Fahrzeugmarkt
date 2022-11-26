@@ -21,6 +21,20 @@ public abstract class Benutzer
 
     }
 
+    public void update (Benutzer other)
+    {
+        this.setPassword(other.getPassword());
+        this.setLocation(other.getLocation());
+        if(this instanceof Seller && other instanceof Seller)
+        {
+            ((Seller) this).setRating(((Seller) other).getRating());
+        }
+        else if (this instanceof Buyer && other instanceof Buyer)
+        {
+            ((Buyer) this).setCarsBought(((Buyer)other).getCarsBought());
+        }
+    }
+
     public String getUsername() {
         return username;
     }

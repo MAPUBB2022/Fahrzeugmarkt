@@ -44,9 +44,7 @@ public class DBUserRepository implements UserRepository
         manager.getTransaction().begin();
         Benutzer a = manager.find(Benutzer.class, username);
 
-        a.setLocation(benutzer.getLocation());
-        a.setPassword(benutzer.getPassword());
-        // TODO ce facem cu valorile specifice buyer si seller?
+        a.update(benutzer);
 
         manager.merge(a); // trebuie?
         manager.getTransaction().commit();
