@@ -18,7 +18,7 @@ public class Controller
         this.userRepository = userRepository;
         this.adsRepository = adsRepository;
         this.transactionRepository = transactionRepository;
-        populate();
+        //populate();
     }
 
     private void populate()
@@ -35,7 +35,7 @@ public class Controller
         adsRepository.add(b);
         adsRepository.add(c);
 
-        Transaktion transaktion = new Transaktion((Buyer) userRepository.findId("iordache"), adsRepository.findId(2), 1020, true);
+        Transaktion transaktion = new Transaktion((Buyer) userRepository.findId("iordache"), adsRepository.findId(10), 1020, true);
         transactionRepository.add(transaktion);
     }
 

@@ -13,7 +13,7 @@ public class Transaktion
     private int id;
 
     @OneToOne(
-            cascade = {CascadeType.ALL}
+            cascade = {CascadeType.MERGE}
     )
     @JoinColumn(
             name = "buyer_id"
@@ -21,7 +21,7 @@ public class Transaktion
     private Buyer buyer;
 
     @OneToOne(
-            cascade = {CascadeType.ALL}
+            cascade = {CascadeType.MERGE}
     )
     @JoinColumn(
             name = "ad_id"
@@ -39,7 +39,6 @@ public class Transaktion
         this.bid = bid;
         ///////////////
         this.date = LocalDate.now();
-        this.id = -1;
     }
 
     public Transaktion() {

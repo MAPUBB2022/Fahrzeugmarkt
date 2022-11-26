@@ -10,9 +10,7 @@ public abstract class Advert
             strategy = GenerationType.IDENTITY
     )
     private int ID;
-    @OneToOne(
-            cascade = {CascadeType.ALL}
-    )
+    @OneToOne
     @JoinColumn(
             name = "seller_id"
     )
@@ -67,7 +65,6 @@ public abstract class Advert
         this.startPrice = startPrice;
         /////////////////
         placeDate = LocalDate.now();
-        this.ID=-1;
     }
 
     public Seller getSeller() {

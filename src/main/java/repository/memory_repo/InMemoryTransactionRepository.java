@@ -74,18 +74,4 @@ public class InMemoryTransactionRepository implements TransactionRepository
         }
         return transaktions;
     }
-
-    @Override
-    public List<Transaktion> getTransactionsBySeller(Seller seller)
-    {
-        List<Transaktion> transaktions = new ArrayList<>();
-        for(Transaktion t: transaktionList)
-        {
-            if(t.getAd().getSeller().getUsername().equals(seller.getUsername()))
-            {
-                transaktions.add(t);
-            }
-        }
-        return transaktions;
-    }
 }
