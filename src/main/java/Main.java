@@ -21,7 +21,6 @@ import java.util.List;
 public class Main {
     public static void main(String[] args)
     {
-        //System.out.println("Hello world!");
         UserRepository userRepository = new DBUserRepository();
         AdsRepository adsRepository = new DBCarRepository();
         TransactionRepository transactionRepository = new DBTransactionRepository();
@@ -29,6 +28,5 @@ public class Main {
         View view = new View(controller, userRepository, adsRepository, transactionRepository);
 
         view.mainMenu();
-        view.createAd();
     }
 }

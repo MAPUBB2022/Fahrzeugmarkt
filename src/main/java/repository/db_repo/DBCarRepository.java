@@ -2,16 +2,13 @@ package repository.db_repo;
 
 import model.Advert;
 import model.Seller;
+import model.Transaktion;
 import repository.AdsRepository;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
-
-import static java.time.LocalTime.now;
 
 public class DBCarRepository implements AdsRepository
 {
@@ -69,7 +66,7 @@ public class DBCarRepository implements AdsRepository
 
         a.update(newAdvert);
 
-        manager.merge(a); // trebuie?
+        manager.merge(a);
         manager.getTransaction().commit();
     }
 

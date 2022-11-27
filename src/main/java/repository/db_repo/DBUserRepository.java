@@ -1,6 +1,5 @@
 package repository.db_repo;
 
-import model.Advert;
 import model.Benutzer;
 import repository.UserRepository;
 
@@ -46,7 +45,7 @@ public class DBUserRepository implements UserRepository
 
         a.update(benutzer);
 
-        manager.merge(a); // trebuie?
+        manager.merge(a);
         manager.getTransaction().commit();
     }
 

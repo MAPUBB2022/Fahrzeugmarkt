@@ -1,7 +1,6 @@
 package repository.memory_repo;
 
 import model.Advert;
-import model.Seller;
 import model.Transaktion;
 import repository.TransactionRepository;
 

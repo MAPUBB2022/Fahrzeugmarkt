@@ -1,7 +1,6 @@
 package repository.db_repo;
 
 import model.Advert;
-import model.Seller;
 import model.Transaktion;
 import repository.TransactionRepository;
 
@@ -46,7 +45,7 @@ public class DBTransactionRepository implements TransactionRepository
 
         a.update(transaktion);
 
-        manager.merge(a); // trebuie?
+        manager.merge(a);
         manager.getTransaction().commit();
     }
 

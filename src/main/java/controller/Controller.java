@@ -8,6 +8,8 @@ import repository.UserRepository;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.Year;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class Controller
 {
@@ -61,13 +63,36 @@ public class Controller
         return transaktion;
     }
 
+    public Transaktion getCurrentBuyer(Advert advert)
+    {
+        for (Transaktion t: transactionRepository.getTransactionsByCar(advert) )
+        {
+            if(!t.isBid())
+            {
+                return t;
+            }
+        }
+        return null;
+    }
+
+
     public LocalDate getAuctionEndDate(Advert advert)
     {
         return advert.getPlaceDate().plusDays(advert.getAuctionDays());
     }
 
-    // TODO check for elapsed auctions and confront the seller with the final offer, should there be one
-    // TODO check for ads older than one month and confront the seller with the final offer, should there be one
+    public boolean isElapsed(Advert a)
+    {
+        long daysBetween = Duration.between(a.getPlaceDate().atStartOfDay(), LocalDate.now().atStartOfDay()).toDays(); // how many days since ad posted
+        return daysBetween >= a.getAuctionDays();
+    }
+
+    public boolean isSold(Advert a)
+    {
+        List<Transaktion> list = transactionRepository.getTransactionsByCar(a);
+        list = list.stream().filter(n -> !n.isBid()).toList();
+        return list.size() >= 1;
+    }
 
     public void sellCar(Advert e) // aka place advert
     {
@@ -80,14 +105,14 @@ public class Controller
     public void placeBid(Transaktion t)
     {
         long daysBetween = Duration.between(t.getAd().getPlaceDate().atStartOfDay(), LocalDate.now().atStartOfDay()).toDays(); // how many days since ad posted
-        if(adsRepository.findId(t.getAd().getID()) != null && daysBetween <= t.getAd().getAuctionDays())
+        if(adsRepository.findId(t.getAd().getID()) != null && !isElapsed(t.getAd()))
             // the ad on which it is bid should still exist and the auction should still be ongoing (not more than auctionDays days should have elapsed)
             transactionRepository.add(t);
     }
 
     public void buyUpfront(Transaktion t)
     {
-        if(adsRepository.findId(t.getAd().getBuyPrice()) != null) // the ad on which it is bid should still exist
+        if(adsRepository.findId(t.getAd().getID()) != null) // the ad on which it is bid should still exist
             transactionRepository.add(t);
     }
 
@@ -98,31 +123,13 @@ public class Controller
 
     public void acceptTransaction(Transaktion t) // the seller accepts the buy offer / the highest bid => the transaction and ad get deleted
     {
+        Buyer b = t.getBuyer();
+        List<Transaktion> tr = transactionRepository.getTransactionsByCar(t.getAd());
+        for (Transaktion transaktion: tr)
+            transactionRepository.delete(transaktion.getId());
         adsRepository.delete(t.getAd().getID()); // car is sold => no longer available on the site
-        transactionRepository.delete(t.getId()); // car no longer available => transaction references non-existent car and is deleted
-    }
 
-    public UserRepository getUserRepository() {
-        return userRepository;
-    }
-
-    public void setUserRepository(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
-
-    public AdsRepository getAdsRepository() {
-        return adsRepository;
-    }
-
-    public void setAdsRepository(AdsRepository adsRepository) {
-        this.adsRepository = adsRepository;
-    }
-
-    public TransactionRepository getTransactionRepository() {
-        return transactionRepository;
-    }
-
-    public void setTransactionRepository(TransactionRepository transactionRepository) {
-        this.transactionRepository = transactionRepository;
+        b.setCarsBought(b.getCarsBought()+1);
+        userRepository.update(b.getUsername(), b);
     }
 }
