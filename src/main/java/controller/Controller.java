@@ -9,7 +9,6 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.Year;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class Controller
 {
@@ -20,9 +19,13 @@ public class Controller
         this.userRepository = userRepository;
         this.adsRepository = adsRepository;
         this.transactionRepository = transactionRepository;
-        //populate();
     }
-
+    public Controller(UserRepository userRepository, AdsRepository adsRepository, TransactionRepository transactionRepository, boolean pop) {
+        this.userRepository = userRepository;
+        this.adsRepository = adsRepository;
+        this.transactionRepository = transactionRepository;
+        populate();
+    }
     private void populate()
     {
         userRepository.add(new Buyer("andreigali","42069","Cristian, BV"));
@@ -37,8 +40,10 @@ public class Controller
         adsRepository.add(b);
         adsRepository.add(c);
 
-        Transaktion transaktion = new Transaktion((Buyer) userRepository.findId("iordache"), adsRepository.findId(10), 1020, true);
+        Transaktion transaktion = new Transaktion((Buyer) userRepository.findId("iordache"), adsRepository.findId(2), 1020, true);
+        Transaktion transaktion2 = new Transaktion((Buyer) userRepository.findId("andreigali"), adsRepository.findId(0), 10090, false);
         transactionRepository.add(transaktion);
+        transactionRepository.add(transaktion2);
     }
 
     public Benutzer checkCreds(String user, String pass)

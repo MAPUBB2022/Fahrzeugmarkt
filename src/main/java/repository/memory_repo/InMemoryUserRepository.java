@@ -1,6 +1,9 @@
 package repository.memory_repo;
 
+import model.Admin;
 import model.Benutzer;
+import model.Buyer;
+import model.Seller;
 import repository.UserRepository;
 
 import java.util.ArrayList;
@@ -13,6 +16,15 @@ public class InMemoryUserRepository implements UserRepository
     public InMemoryUserRepository()
     {
         this.allBenutzers = new ArrayList<>();
+        //populate();
+    }
+
+    private void populate()
+    {
+        this.add(new Buyer("andreigali","42069","Cristian, BV"));
+        this.add(new Buyer("iordache","melissa","Brasov, BV"));
+        this.add(new Seller("veriku","iazivericule","Pitesti, AG"));
+        this.add(new Admin("vincenzo","gen","pe Italia"));
     }
 
     @Override
