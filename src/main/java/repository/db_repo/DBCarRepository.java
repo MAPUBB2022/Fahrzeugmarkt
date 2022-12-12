@@ -14,6 +14,11 @@ public class DBCarRepository implements AdsRepository
 {
     private EntityManagerFactory factory;
     private EntityManager manager;
+
+    /**
+     * initializer for the database repository
+     * @throws PersistenceException if the connection with the database fails
+     */
     public DBCarRepository()
     {
         factory = Persistence.createEntityManagerFactory("default");

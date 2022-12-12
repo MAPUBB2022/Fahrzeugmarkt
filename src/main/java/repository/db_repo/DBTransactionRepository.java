@@ -7,6 +7,7 @@ import repository.TransactionRepository;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
+import javax.persistence.PersistenceException;
 import java.util.List;
 
 public class DBTransactionRepository implements TransactionRepository
@@ -14,6 +15,10 @@ public class DBTransactionRepository implements TransactionRepository
     private EntityManagerFactory factory;
     private EntityManager manager;
 
+    /**
+     * initializer for the database repository
+     * @throws PersistenceException if the connection with the database fails
+     */
     public DBTransactionRepository()
     {
         factory = Persistence.createEntityManagerFactory("default");

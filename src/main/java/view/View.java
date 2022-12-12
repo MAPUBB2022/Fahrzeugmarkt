@@ -29,6 +29,10 @@ public class View
         this.loggedBenutzer = null;
     }
 
+    /**
+     * prints all the details of an advert to the screen
+     * @param advert the advert that should be detailed
+     */
     private void printAd(Advert advert)
     {
         if(advert instanceof Car)
@@ -58,6 +62,10 @@ public class View
         }
     }
 
+    /**
+     * prints a summary of a given advert
+     * @param advert the advert that should be summarized
+     */
     private void printAdSummary(Advert advert)
     {
         if(advert instanceof Car)
@@ -68,6 +76,11 @@ public class View
 
         System.out.printf("%s %s %s; %s Euro\n", advert.getMake(), advert.getModel(), advert.getYear(),advert.getBuyPrice());
     }
+
+    /**
+     * prints the details of a transaction on the screen
+     * @param transaktion the transaction that should be detailed
+     */
     private void printTransaction(Transaktion transaktion)
     {
         if(transaktion.isBid())
@@ -75,6 +88,12 @@ public class View
         else
             System.out.printf("\t%s, %s: bought with %s Euro\n", transaktion.getBuyer().getUsername(), transaktion.getDate(), transaktion.getAmount());
     }
+
+    /**
+     * user interface for logging in
+     * asks user for username and password
+     * @throws IllegalAccessException // TODO sau?
+     */
     public void login() throws IllegalAccessException {
         Scanner myObj = new Scanner(System.in);
         System.out.println("Enter username: ");
@@ -86,9 +105,14 @@ public class View
         loggedBenutzer = controller.checkCreds(username, password);
     }
 
+    /**
+     * user interface for interacting with adverts (for buyers)
+     * for any ad the user can see its details, buy it or bid on it
+     * @param adList the adverts that should be presented to the user
+     */
     private void presentAdsBuyer(List<Advert> adList)
     {
-        adList = adList.stream().filter(n -> !controller.isElapsed(n) && !controller.isSold(n)).collect(Collectors.toList());
+        adList = adList.stream().filter(n -> !controller.isExpired(n) && !controller.isSold(n)).collect(Collectors.toList());
         int globalCounter=0;
         int i=0;
         while(globalCounter<adList.size())
@@ -139,11 +163,16 @@ public class View
         }
     }
 
+    /**
+     * user interface for seeing adverts (for sellers)
+     * the seller can see vital information for all his adverts
+     * @param adList the adverts that should be presented to the user
+     */
     private void presentAdsSeller(List<Advert> adList)
     {
         for (Advert a: adList )
         {
-            if(controller.isElapsed(a))
+            if(controller.isExpired(a))
                 System.out.println("\nThis Advert has expired!");
             if(controller.isSold(a))
                 System.out.println("\nThis Advert has been sold!");
@@ -156,10 +185,15 @@ public class View
         }
     }
 
+    /**
+     * user interface for interacting between the actions of buyers and sellers.
+     * sellers can see what transactions buyers have proposed and accept or deny them
+     * if an ad expires without being bought, it is also shown here
+     */
     private void presentTransactions()
     {
         List<Advert> adverts = adsRepository.getAllAdsFromSeller((Seller) loggedBenutzer);
-        adverts = adverts.stream().filter(n -> controller.isElapsed(n) || controller.isSold(n) ).collect(Collectors.toList());
+        adverts = adverts.stream().filter(n -> controller.isExpired(n) || controller.isSold(n) ).collect(Collectors.toList());
 
         int globalCounter=0;
         int i=0;
@@ -172,8 +206,8 @@ public class View
                 printAdSummary(adverts.get(globalCounter+i));
                 Transaktion transaktion = controller.getCurrentBid(adverts.get(globalCounter+i));
                 if (adverts.get(globalCounter+i).getAuctionDays() > 0) {
-                    if (!controller.isElapsed(adverts.get(globalCounter+i)))
-                        System.out.printf("\tAuction will end on %s\n", controller.getAuctionEndDate(adverts.get(globalCounter+i)));
+                    if (!controller.isExpired(adverts.get(globalCounter+i)))
+                        System.out.printf("\tAuction will end on %s\n", controller.getAdvertExpDate(adverts.get(globalCounter+i)));
                     else
                         System.out.print("\tAuction has ended!\n");
                 } else
@@ -209,7 +243,7 @@ public class View
                         controller.denyTransaction(controller.getCurrentBuyer(currentAd));
                     }
                 }
-                else if(controller.isElapsed(currentAd))
+                else if(controller.isExpired(currentAd))
                 {
                     Transaktion currentTransaction = controller.getCurrentBid(currentAd);
                     if(currentTransaction!=null)
@@ -249,6 +283,10 @@ public class View
         }
     }
 
+    /**
+     * interface for removing users from the platform (designed for admins)
+     * the admin is asked for the username of the user selected for deletion
+     */
     public void removeUser()
     {
         System.out.print("Which user would you like to remove: ");
@@ -265,6 +303,10 @@ public class View
         }
     }
 
+    /**
+     * interface for adding users to the platform
+     * user is prompted for username, password and location
+     */
     public void addUser()
     {
         System.out.print("Enter a username: ");
@@ -293,6 +335,11 @@ public class View
             System.out.println("Username is taken\n");
     }
 
+    /**
+     * the main menu of the console application
+     * user logs in, then the appropriate functionality for each user type is available
+     * @throws IllegalAccessException // TODO tre sa dispara
+     */
     public void mainMenu() throws IllegalAccessException {
         while (true)
         {
@@ -395,6 +442,10 @@ public class View
         }
     }
 
+    /**
+     * interface for creating an advert
+     * the user is prompted for all parameters in oder to add the car to the platform
+     */
     public void createAd(){
         boolean is_Car;
         Advert a;

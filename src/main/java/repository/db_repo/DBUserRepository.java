@@ -6,10 +6,7 @@ import model.Buyer;
 import model.Seller;
 import repository.UserRepository;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
-import javax.persistence.Query;
+import javax.persistence.*;
 import java.util.List;
 import java.util.Objects;
 
@@ -18,6 +15,10 @@ public class DBUserRepository implements UserRepository
     private EntityManagerFactory factory;
     private EntityManager manager;
 
+    /**
+     * initializer for the database repository
+     * @throws PersistenceException if the connection with the database fails
+     */
     public DBUserRepository()
     {
         factory = Persistence.createEntityManagerFactory("default");

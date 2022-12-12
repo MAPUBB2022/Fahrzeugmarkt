@@ -63,18 +63,18 @@ class ControllerTest {
     void getAuctionEndDate()
     {
         Advert ad = adsRepository.findId(1);
-        assertEquals(LocalDate.now().atStartOfDay().plusDays(7).toLocalDate(), testedCtrl.getAuctionEndDate(ad));
+        assertEquals(LocalDate.now().atStartOfDay().plusDays(7).toLocalDate(), testedCtrl.getAdvertExpDate(ad));
         Advert ad2 = adsRepository.findId(2);
-        assertEquals(LocalDate.now().atStartOfDay().plusDays(20).toLocalDate(), testedCtrl.getAuctionEndDate(ad2));
+        assertEquals(LocalDate.now().atStartOfDay().plusDays(20).toLocalDate(), testedCtrl.getAdvertExpDate(ad2));
     }
 
     @Test
     void isElapsed()
     {
         Advert ad = adsRepository.findId(1);
-        assertFalse(testedCtrl.isElapsed(ad));
+        assertFalse(testedCtrl.isExpired(ad));
         Advert ad2 = adsRepository.findId(2);
-        assertFalse(testedCtrl.isElapsed(ad2));
+        assertFalse(testedCtrl.isExpired(ad2));
     }
 
     @Test
