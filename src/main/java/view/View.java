@@ -75,8 +75,7 @@ public class View
         else
             System.out.printf("\t%s, %s: bought with %s Euro\n", transaktion.getBuyer().getUsername(), transaktion.getDate(), transaktion.getAmount());
     }
-    public void login()
-    {
+    public void login() throws IllegalAccessException {
         Scanner myObj = new Scanner(System.in);
         System.out.println("Enter username: ");
         String username = myObj.nextLine();
@@ -294,8 +293,7 @@ public class View
             System.out.println("Username is taken\n");
     }
 
-    public void mainMenu()
-    {
+    public void mainMenu() throws IllegalAccessException {
         while (true)
         {
             if (loggedBenutzer == null)

@@ -13,7 +13,6 @@ import static java.time.Instant.ofEpochMilli;
 import static org.junit.jupiter.api.Assertions.*;
 
 class InMemoryCarRepositoryTest {
-
     InMemoryCarRepository testedRepo;
     @BeforeEach
     void setUp()

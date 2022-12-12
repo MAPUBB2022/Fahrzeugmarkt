@@ -1,8 +1,11 @@
 package model;
 
 import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.PrimaryKeyJoinColumn;
 
 @Entity
+@PrimaryKeyJoinColumn(name="ID")
 public class Motorcycle extends Advert
 {
     private String suspensionType, brakeType;

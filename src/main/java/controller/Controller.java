@@ -19,6 +19,7 @@ public class Controller
         this.userRepository = userRepository;
         this.adsRepository = adsRepository;
         this.transactionRepository = transactionRepository;
+        //populate();
     }
     public Controller(UserRepository userRepository, AdsRepository adsRepository, TransactionRepository transactionRepository, boolean pop) {
         this.userRepository = userRepository;
@@ -26,6 +27,7 @@ public class Controller
         this.transactionRepository = transactionRepository;
         populate();
     }
+
     private void populate()
     {
         userRepository.add(new Buyer("andreigali","42069","Cristian, BV"));
@@ -46,8 +48,7 @@ public class Controller
         transactionRepository.add(transaktion2);
     }
 
-    public Benutzer checkCreds(String user, String pass)
-    {
+    public Benutzer checkCreds(String user, String pass) {
         Benutzer u = userRepository.findByUserAnsPass(user, pass);
         return u;
     }

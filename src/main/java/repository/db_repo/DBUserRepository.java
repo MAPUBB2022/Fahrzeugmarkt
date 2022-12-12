@@ -1,6 +1,9 @@
 package repository.db_repo;
 
+import model.Admin;
 import model.Benutzer;
+import model.Buyer;
+import model.Seller;
 import repository.UserRepository;
 
 import javax.persistence.EntityManager;
@@ -8,6 +11,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.persistence.Query;
 import java.util.List;
+import java.util.Objects;
 
 public class DBUserRepository implements UserRepository
 {
@@ -70,13 +74,10 @@ public class DBUserRepository implements UserRepository
     }
 
     @Override
-    public Benutzer findByUserAnsPass(String username, String password)
-    {
-        manager.getTransaction().begin();
-        Query query = manager.createNativeQuery("select * from Benutzer u where username=:user_name", Benutzer.class);
-        query.setParameter("user_name", username);
-        Benutzer foundBenutzer = (Benutzer) query.getSingleResult();
-        manager.getTransaction().commit();
+    public Benutzer findByUserAnsPass(String username, String password) {
+
+        Benutzer foundBenutzer = findId(username);
+
         if(foundBenutzer.getPassword().equals(password))
             return foundBenutzer;
         return null;

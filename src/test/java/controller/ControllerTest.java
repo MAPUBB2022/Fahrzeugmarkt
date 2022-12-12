@@ -32,8 +32,7 @@ class ControllerTest {
     }
 
     @Test
-    void checkCreds()
-    {
+    void checkCreds() throws IllegalAccessException {
         Buyer ioio = (Buyer) userRepository.findId("iordache");
         assertEquals(ioio, testedCtrl.checkCreds("iordache", "melissa"));
         assertNull(testedCtrl.checkCreds("iordache", "iulia"));

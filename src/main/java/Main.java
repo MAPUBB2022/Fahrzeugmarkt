@@ -19,8 +19,7 @@ import java.sql.ResultSet;
 import java.util.List;
 
 public class Main {
-    public static void main(String[] args)
-    {
+    public static void main(String[] args) throws IllegalAccessException {
         UserRepository userRepository = new DBUserRepository();
         AdsRepository adsRepository = new DBCarRepository();
         TransactionRepository transactionRepository = new DBTransactionRepository();
