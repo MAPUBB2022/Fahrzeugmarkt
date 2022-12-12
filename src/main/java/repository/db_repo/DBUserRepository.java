@@ -1,5 +1,6 @@
 package repository.db_repo;
 
+import exceptions.IllegalIdException;
 import model.Admin;
 import model.Benutzer;
 import model.Buyer;
@@ -34,33 +35,37 @@ public class DBUserRepository implements UserRepository
     }
 
     @Override
-    public void delete(String username)
-    {
+    public void delete(String username) throws IllegalIdException {
         manager.getTransaction().begin();
         Benutzer a = manager.find(Benutzer.class, username);
-        manager.remove(a);
+        if(a!=null)
+            manager.remove(a);
+        else
+            throw new IllegalIdException();
         manager.getTransaction().commit();
     }
 
     @Override
-    public void update(String username, Benutzer benutzer)
-    {
+    public void update(String username, Benutzer benutzer) throws IllegalIdException {
         manager.getTransaction().begin();
         Benutzer a = manager.find(Benutzer.class, username);
-
-        a.update(benutzer);
-
-        manager.merge(a);
+        if(a!=null)
+        {
+            a.update(benutzer);
+            manager.merge(a);
+        }
+        else
+            throw new IllegalIdException();
         manager.getTransaction().commit();
     }
 
     @Override
-    public Benutzer findId(String username)
-    {
+    public Benutzer findId(String username) throws IllegalIdException {
         manager.getTransaction().begin();
         Benutzer a = manager.find(Benutzer.class, username);
         manager.getTransaction().commit();
-
+        if(a==null)
+            throw new IllegalIdException();
         return a;
     }
 
@@ -77,7 +82,15 @@ public class DBUserRepository implements UserRepository
     @Override
     public Benutzer findByUserAnsPass(String username, String password) {
 
-        Benutzer foundBenutzer = findId(username);
+        Benutzer foundBenutzer = null;
+        try
+        {
+            foundBenutzer = findId(username);
+        }
+        catch (IllegalIdException e)
+        {
+            return null;
+        }
 
         if(foundBenutzer.getPassword().equals(password))
             return foundBenutzer;

@@ -1,6 +1,10 @@
 package view;
 
 import controller.Controller;
+import exceptions.IllegalIdException;
+import exceptions.InvalidCredsException;
+import exceptions.InvalidInputException;
+import exceptions.NoTransactionException;
 import model.*;
 import repository.AdsRepository;
 import repository.TransactionRepository;
@@ -92,17 +96,23 @@ public class View
     /**
      * user interface for logging in
      * asks user for username and password
-     * @throws IllegalAccessException // TODO sau?
      */
-    public void login() throws IllegalAccessException {
-        Scanner myObj = new Scanner(System.in);
-        System.out.println("Enter username: ");
-        String username = myObj.nextLine();
+    public void login()
+    {
+        try
+        {
+                Scanner myObj = new Scanner(System.in);
+                System.out.println("Enter username: ");
+                String username = myObj.nextLine();
 
-        System.out.println("Enter password: ");
-        String password = myObj.nextLine();
+                System.out.println("Enter password: ");
+                String password = myObj.nextLine();
 
-        loggedBenutzer = controller.checkCreds(username, password);
+                loggedBenutzer = controller.checkCreds(username, password);
+        }
+        catch (InvalidCredsException e) {
+            System.out.println("Login failed! Try again");
+        }
     }
 
     /**
@@ -137,11 +147,14 @@ public class View
                 //present ad in a detailed fashion
                 Advert currentAd = adList.get(globalCounter+conve-1);
                 printAd(currentAd);
-                Transaktion currentBid =  controller.getCurrentBid(currentAd);
-                if(currentBid !=null)
+                Transaktion currentBid = null;
+                try {
+                    currentBid = controller.getCurrentBid(currentAd);
                     System.out.printf("\nThe current bid on this Advert is %s Euro\n", currentBid.getAmount());
-                else
+                } catch (NoTransactionException e) {
                     System.out.print("\nThere are no bids on this Advert\n");
+                }
+
                 System.out.println("What would you like to do: \n1. Place a bid\n2. Buy the car\n\nChoose an option (1-2): ");
                 int opt = myObj.nextInt();
                 if(opt==1)
@@ -149,17 +162,25 @@ public class View
                     System.out.println("How much would you like to bid? ");
                     int amount = myObj.nextInt();
                     Transaktion transaktion = new Transaktion((Buyer) loggedBenutzer, currentAd, amount, true);
-                    controller.placeBid(transaktion);
+                    try {
+                        controller.placeBid(transaktion);
+                    } catch (InvalidInputException e) {
+                        System.out.println("Bid has failed.");
+                    }
                 }
                 else if (opt==2)
                 {
                     Transaktion transaktion = new Transaktion((Buyer) loggedBenutzer, currentAd, currentAd.getBuyPrice(), false);
-                    controller.buyUpfront(transaktion);
-                    System.out.println("Transaction completed successfully!");
+                    try {
+                        controller.buyUpfront(transaktion);
+                        System.out.println("Transaction completed successfully!");
+                    } catch (InvalidInputException e) {
+                        System.out.println("Transaction failed.");
+                    }
+
                 }
                 break;
             }
-
         }
     }
 
@@ -177,11 +198,13 @@ public class View
             if(controller.isSold(a))
                 System.out.println("\nThis Advert has been sold!");
             printAdSummary(a);
-            Transaktion currentBid = controller.getCurrentBid(a);
-            if(currentBid != null)
+            Transaktion currentBid = null;
+            try {
+                currentBid = controller.getCurrentBid(a);
                 System.out.printf("\tCurrent bid: %s\n\n", currentBid.getAmount());
-            else
+            } catch (NoTransactionException e) {
                 System.out.print("\tThere is currently no bid\n\n");
+            }
         }
     }
 
@@ -199,23 +222,26 @@ public class View
         int i=0;
         while(globalCounter<adverts.size())
         {
-
             for(i=0; i<10 && i+globalCounter < adverts.size(); i++) // "Page size" is 10
             {
                 System.out.printf("%d\t", i+1);
                 printAdSummary(adverts.get(globalCounter+i));
-                Transaktion transaktion = controller.getCurrentBid(adverts.get(globalCounter+i));
-                if (adverts.get(globalCounter+i).getAuctionDays() > 0) {
+                if (adverts.get(globalCounter+i).getAuctionDays() > 0)
+                {
                     if (!controller.isExpired(adverts.get(globalCounter+i)))
                         System.out.printf("\tAuction will end on %s\n", controller.getAdvertExpDate(adverts.get(globalCounter+i)));
                     else
                         System.out.print("\tAuction has ended!\n");
-                } else
-                    System.out.print("\tThis is not an auction\n");
-                if (transaktion == null)
-                    System.out.println("\tNo bids or buy offers on this advert.\n");
+                }
                 else
+                    System.out.print("\tThis is not an auction\n");
+
+                try {
+                    Transaktion transaktion = controller.getCurrentBid(adverts.get(globalCounter+i));
                     printTransaction(transaktion);
+                } catch (NoTransactionException e) {
+                    System.out.println("\tNo bids on this advert.\n");
+                }
             }
             System.out.printf("Select a car (1-%s) or press enter to see the next page: ",i);
             Scanner myObj = new Scanner(System.in);  // Create a Scanner object
@@ -231,50 +257,60 @@ public class View
             {
                 if(controller.isSold(currentAd))
                 {
-                    System.out.printf("%s has bought this advert!\n", controller.getCurrentBuyer(currentAd).getBuyer().getUsername());
-                    System.out.println("What would you like to do: \n1. Accept the transaction\n2. Deny the transaction\n\nChoose an option (1-2): ");
-                    int opt = myObj.nextInt();
-                    if(opt==1)
-                    {
-                        controller.acceptTransaction(controller.getCurrentBuyer(currentAd));
-                    }
-                    else if (opt==2)
-                    {
-                        controller.denyTransaction(controller.getCurrentBuyer(currentAd));
-                    }
-                }
-                else if(controller.isExpired(currentAd))
-                {
-                    Transaktion currentTransaction = controller.getCurrentBid(currentAd);
-                    if(currentTransaction!=null)
-                    {
-                        System.out.printf("%s has won this advert!\n", controller.getCurrentBid(currentAd).getBuyer().getUsername());
+                    try {
+                        Transaktion t = controller.getCurrentBuyer(currentAd);
+                        System.out.printf("%s has bought this advert!\n", t.getBuyer().getUsername());
                         System.out.println("What would you like to do: \n1. Accept the transaction\n2. Deny the transaction\n\nChoose an option (1-2): ");
                         int opt = myObj.nextInt();
                         if(opt==1)
                         {
-                            controller.acceptTransaction(controller.getCurrentBid(currentAd));
+                            controller.acceptTransaction(t);
                         }
                         else if (opt==2)
                         {
-                            controller.denyTransaction(controller.getCurrentBid(currentAd));
+                            controller.denyTransaction(t);
                         }
+                    } catch (NoTransactionException e) {
+                        System.out.println("The transaction has been retracted");
                     }
-                    else
-                    {
+                }
+                else if(controller.isExpired(currentAd))
+                {
+                    try {
+                        Transaktion currentTransaction = controller.getCurrentBid(currentAd);
+                        System.out.printf("%s has won this advert!\n", currentTransaction.getBuyer().getUsername());
+                        System.out.println("What would you like to do: \n1. Accept the transaction\n2. Deny the transaction\n\nChoose an option (1-2): ");
+                        int opt = myObj.nextInt();
+                        if(opt==1)
+                        {
+                            controller.acceptTransaction(currentTransaction);
+                        }
+                        else if (opt==2)
+                        {
+                            controller.denyTransaction(currentTransaction);
+                        }
+                    } catch (NoTransactionException e) {
                         System.out.print("The Advert has expired, and there are no bids or buy offers.\n");
                         System.out.println("What would you like to do: \n1. Remove the advert\n2. Refresh the advert\n\nChoose an option (1-2): ");
                         int opt = myObj.nextInt();
                         if(opt==1)
                         {
-                            adsRepository.delete(currentAd.getID());
+                            try {
+                                adsRepository.delete(currentAd.getID());
+                            } catch (IllegalIdException ex) {
+                                System.out.println("Delete failed");
+                            }
                         }
                         else if (opt==2)
                         {
                             System.out.println("For how many days would you like the Advert to be active: ");
                             int days = myObj.nextInt();
                             currentAd.setAuctionDays(days);
-                            adsRepository.update(currentAd.getID(), currentAd);
+                            try {
+                                adsRepository.update(currentAd.getID(), currentAd);
+                            } catch (IllegalIdException ex) {
+                                System.out.println("Update failed");
+                            }
                         }
                     }
                 }
@@ -292,14 +328,10 @@ public class View
         System.out.print("Which user would you like to remove: ");
         Scanner myObj = new Scanner(System.in);  // Create a Scanner object
         String userInput = myObj.nextLine();
-        Benutzer b = userRepository.findId(userInput);
-        if(b==null)
-        {
-            System.out.println("User doesn't exist!");
-        }
-        else
-        {
+        try {
             userRepository.delete(userInput);
+        } catch (IllegalIdException e) {
+            System.out.println("User doesn't exist!");
         }
     }
 
@@ -312,35 +344,44 @@ public class View
         System.out.print("Enter a username: ");
         Scanner myObj = new Scanner(System.in);  // Create a Scanner object
         String userInput = myObj.nextLine();
-        if(userRepository.findId(userInput) == null)
+
+        try
+        {
+            userRepository.findId(userInput);
+            System.out.println("Username is taken\n");
+        }
+        catch (IllegalIdException e)
         {
             System.out.println("Enter a password: ");
             String pass = myObj.nextLine();
             System.out.println("Enter your location: ");
             String location = myObj.nextLine();
             System.out.print("What kind of user is this?\n0 - Admin\n1 - Buyer\n2 - Seller\nChoose a type (1-3): ");
-            int type = myObj.nextInt();
-            Benutzer b;
-            if(type == 0)
-                b = new Admin(userInput, pass, location);
-            else if(type==1)
-                b = new Buyer(userInput, pass, location);
-            else if(type==2)
-                b = new Seller(userInput, pass, location);
-            else
-                throw new RuntimeException(); // todo de schimbat
+            boolean success = false;
+            Benutzer b = null;
+            while(!success)
+            {
+                success = true;
+                int type = myObj.nextInt();
+                if(type == 0)
+                    b = new Admin(userInput, pass, location);
+                else if(type==1)
+                    b = new Buyer(userInput, pass, location);
+                else if(type==2)
+                    b = new Seller(userInput, pass, location);
+                else
+                    success = false;
+            }
             userRepository.add(b);
         }
-        else
-            System.out.println("Username is taken\n");
     }
 
     /**
      * the main menu of the console application
      * user logs in, then the appropriate functionality for each user type is available
-     * @throws IllegalAccessException // TODO tre sa dispara
      */
-    public void mainMenu() throws IllegalAccessException {
+    public void mainMenu()
+    {
         while (true)
         {
             if (loggedBenutzer == null)
@@ -348,8 +389,6 @@ public class View
                 login();
                 if(loggedBenutzer != null)
                     continue;
-                else
-                    System.out.println("Login failed! Try again");
             }
 
             if(loggedBenutzer instanceof Admin)
@@ -501,7 +540,11 @@ public class View
             String brakeType = myObj.nextLine();
             a = new Motorcycle( (Seller) loggedBenutzer, auctionDays, make, model, year,displacement,hp,torque,used,automaticGearbox,suspensionType,brakeType, buyPrice, startPrice);
         }
-        controller.sellCar(a);
+        try {
+            controller.sellCar(a);
+        } catch (InvalidInputException e) {
+            System.out.println("Adding the car failed. Invalid parameters");
+        }
     }
 
 }

@@ -1,5 +1,9 @@
 package controller;
 
+import exceptions.IllegalIdException;
+import exceptions.InvalidCredsException;
+import exceptions.InvalidInputException;
+import exceptions.NoTransactionException;
 import model.*;
 import repository.AdsRepository;
 import repository.TransactionRepository;
@@ -36,15 +40,30 @@ public class Controller
         userRepository.add(new Seller("veriku","iazivericule","Pitesti, AG"));
         userRepository.add(new Admin("vincenzo","gen","pe Italia"));
 
-        Advert a = new Car((Seller) userRepository.findId("veriku"), 0, "VW", "Taigo", 2022, 1499, 150, 200, false, false, 5, 4,23000, 0);
-        Advert b = new Car((Seller) userRepository.findId("veriku"), 7, "VW", "Passat", 2012, 1999, 150, 200, false, false, 5, 4, 11000, 3000);
-        Advert c = new Car((Seller) userRepository.findId("veriku"), 20, "Dacia", "Papuc", 2000, 1299, 150, 200, false, false, 5, 4, 4000, 800);
+        Advert a = null;
+        Advert b = null;
+        Advert c = null;
+        try {
+            a = new Car((Seller) userRepository.findId("veriku"), 0, "VW", "Taigo", 2022, 1499, 150, 200, false, false, 5, 4,23000, 0);
+            b = new Car((Seller) userRepository.findId("veriku"), 7, "VW", "Passat", 2012, 1999, 150, 200, false, false, 5, 4, 11000, 3000);
+            c = new Car((Seller) userRepository.findId("veriku"), 20, "Dacia", "Papuc", 2000, 1299, 150, 200, false, false, 5, 4, 4000, 800);
+        } catch (IllegalIdException e) {
+            throw new RuntimeException(e); // should never happen as everything is hard-coded
+        }
+
         adsRepository.add(a);
         adsRepository.add(b);
         adsRepository.add(c);
 
-        Transaktion transaktion = new Transaktion((Buyer) userRepository.findId("iordache"), adsRepository.findId(2), 1020, true);
-        Transaktion transaktion2 = new Transaktion((Buyer) userRepository.findId("andreigali"), adsRepository.findId(0), 10090, false);
+        Transaktion transaktion = null;
+        Transaktion transaktion2 = null;
+        try {
+            transaktion = new Transaktion((Buyer) userRepository.findId("iordache"), adsRepository.findId(2), 1020, true);
+            transaktion2 = new Transaktion((Buyer) userRepository.findId("andreigali"), adsRepository.findId(0), 10090, false);
+
+        } catch (IllegalIdException e) {
+            throw new RuntimeException(e); // should never happen as everything is hard-coded
+        }
         transactionRepository.add(transaktion);
         transactionRepository.add(transaktion2);
     }
@@ -54,22 +73,23 @@ public class Controller
      * @param user the searched user
      * @param pass the searched password
      * @return the username with matching username and password
-     * @throws //TODO
+     * @throws InvalidCredsException when the credentials are invalid for any reason
      */
-    public Benutzer checkCreds(String user, String pass)
-
-    {
-        return userRepository.findByUserAnsPass(user, pass);
+    public Benutzer checkCreds(String user, String pass) throws InvalidCredsException {
+        Benutzer b = userRepository.findByUserAnsPass(user, pass);
+        if(b!=null)
+            return b;
+        else
+            throw new InvalidCredsException();
     }
 
     /**
      * gets the highest bid (in terms of price) on a given advert
      * @param advert the advert for which the highest bid is searched
      * @return the highest bid
-     * @throws //TODO when there is no bid for the given car
+     * @throws NoTransactionException when there is no bid available
      */
-    public Transaktion getCurrentBid(Advert advert)
-    {
+    public Transaktion getCurrentBid(Advert advert) throws NoTransactionException {
         int currentAmount = advert.getStartPrice();
         Transaktion transaktion = null;
         for (Transaktion t: transactionRepository.getTransactionsByCar(advert) )
@@ -81,6 +101,8 @@ public class Controller
             }
 
         }
+        if(transaktion == null)
+            throw new NoTransactionException();
         return transaktion;
     }
 
@@ -88,10 +110,9 @@ public class Controller
      * if a car has been bought, return the transaction through which this has been done
      * @param advert the advert which must have been bought
      * @return the transaction consisting of the purchase of the car
-     * @throws //TODO when no one has bought the given car
+     * @throws NoTransactionException when no one has bought the car
      */
-    public Transaktion getCurrentBuyer(Advert advert)
-    {
+    public Transaktion getCurrentBuyer(Advert advert) throws NoTransactionException {
         for (Transaktion t: transactionRepository.getTransactionsByCar(advert) )
         {
             if(!t.isBid())
@@ -99,7 +120,7 @@ public class Controller
                 return t;
             }
         }
-        return null;
+        throw new NoTransactionException();
     }
 
     /**
@@ -138,64 +159,86 @@ public class Controller
     /**
      * places an advert in the repository and checks if it's parameters are valid
      * @param e the advert that should be added
-     * @throws //TODO de mai sus si daca are parametrii invalizi
+     * @throws InvalidInputException if the attributes of the car are not valid
      */
-    public void sellCar(Advert e) // aka place advert
+    public void sellCar(Advert e) throws InvalidInputException // aka place advert
     {
         // business logic daca mai trebuie punem aici
         int year = Year.now().getValue();
         if(e.getYear() > 1980 & e.getYear() <= year+1) // car must be newer than 1980 and not from the future (1 year in the future is allowed e.g. 2023 Chevy Corvette C8 Z06)
             adsRepository.add(e);
+        else
+            throw new InvalidInputException();
     }
 
     /**
      * checks that a given bid is valid and adds it to the repository
      * @param t the bid that should be added
-     * @throws //TODO de sus si daca bid ul e invalid
+     * @throws InvalidInputException if the bid is invalid
      */
-    public void placeBid(Transaktion t)
-    {
-        long daysBetween = Duration.between(t.getAd().getPlaceDate().atStartOfDay(), LocalDate.now().atStartOfDay()).toDays(); // how many days since ad posted
-        if(adsRepository.findId(t.getAd().getID()) != null && !isExpired(t.getAd()))
+    public void placeBid(Transaktion t) throws InvalidInputException {
+        Advert a = null;
+        try {
+            a = adsRepository.findId(t.getAd().getID());
+        } catch (IllegalIdException e) {
+            throw new InvalidInputException(); // the ad has been removed from the repo in the meantime => transaction is not valid
+        }
+        if(a != null && !isExpired(t.getAd()))
             // the ad on which it is bid should still exist and the auction should still be ongoing (not more than auctionDays days should have elapsed)
             transactionRepository.add(t);
+        else
+            throw new InvalidInputException();
     }
 
     /**
      * checks that a given buy offer is valid and adds it to the repository
      * @param t the buy offer that should be added
-     * @throws //TODO de sus si daca tranzactia e invalida
+     * @throws InvalidInputException if the buy offer is invalid
      */
-    public void buyUpfront(Transaktion t)
-    {
-        if(adsRepository.findId(t.getAd().getID()) != null) // the ad on which it is bid should still exist
-            transactionRepository.add(t);
+    public void buyUpfront(Transaktion t) throws InvalidInputException {
+
+        try {
+            adsRepository.findId(t.getAd().getID());
+        } catch (IllegalIdException e) {
+            throw new InvalidInputException(); // the ad has been removed from the repo in the meantime => transaction is not valid
+        }
+
+        transactionRepository.add(t);
     }
 
     /**
      * denies a buy offer/bid (action done by seller) aka it's removed from the repo
      * @param t the transaction that sould be denied
-     * @throws //TODO de sus
+     * @throws NoTransactionException if the transaction is invalid
      */
-    public void denyTransaction(Transaktion t) // the seller doesn't accept the buy offer / the highest bid => the transaction gets deleted
+    public void denyTransaction(Transaktion t) throws NoTransactionException // the seller doesn't accept the buy offer / the highest bid => the transaction gets deleted
     {
-        transactionRepository.delete(t.getId());
+        try {
+            transactionRepository.delete(t.getId());
+        } catch (IllegalIdException e) {
+            throw new NoTransactionException(); // the transaction has been deleted in the meantime
+        }
     }
 
     /**
      * accepts a buy offer/bid (action done by seller) aka it's added to the repo
      * @param t the transaction that sould be accepted
-     * @throws //TODO de sus
+     * @throws NoTransactionException if the transaction is invalid
      */
-    public void acceptTransaction(Transaktion t) // the seller accepts the buy offer / the highest bid => the transaction and ad get deleted
+    public void acceptTransaction(Transaktion t) throws NoTransactionException // the seller accepts the buy offer / the highest bid => the transaction and ad get deleted
     {
         Buyer b = t.getBuyer();
         List<Transaktion> tr = transactionRepository.getTransactionsByCar(t.getAd());
-        for (Transaktion transaktion: tr)
-            transactionRepository.delete(transaktion.getId());
-        adsRepository.delete(t.getAd().getID()); // car is sold => no longer available on the site
-
-        b.setCarsBought(b.getCarsBought()+1);
-        userRepository.update(b.getUsername(), b);
+        try {
+            for (Transaktion transaktion : tr)
+                transactionRepository.delete(transaktion.getId());
+            adsRepository.delete(t.getAd().getID()); // car is sold => no longer available on the site
+            b.setCarsBought(b.getCarsBought()+1);
+            userRepository.update(b.getUsername(), b);
+        }
+        catch (IllegalIdException e)
+        {
+            throw new NoTransactionException();
+        }
     }
 }

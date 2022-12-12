@@ -1,5 +1,6 @@
 package repository.db_repo;
 
+import exceptions.IllegalIdException;
 import model.Advert;
 import model.Seller;
 import model.Transaktion;
@@ -55,33 +56,38 @@ public class DBCarRepository implements AdsRepository
     }
 
     @Override
-    public void delete(Integer id)
-    {
+    public void delete(Integer id) throws IllegalIdException {
         manager.getTransaction().begin();
         Advert a = manager.find(Advert.class, id);
-        manager.remove(a);
+        if(a!=null)
+            manager.remove(a);
+        else
+            throw new IllegalIdException();
         manager.getTransaction().commit();
     }
 
     @Override
-    public void update(Integer id, Advert newAdvert)
-    {
+    public void update(Integer id, Advert newAdvert) throws IllegalIdException {
         manager.getTransaction().begin();
         Advert a = manager.find(Advert.class, id);
+        if(a!=null)
+        {
+            a.update(newAdvert);
+            manager.merge(a);
+        }
+        else
+            throw new IllegalIdException();
 
-        a.update(newAdvert);
-
-        manager.merge(a);
         manager.getTransaction().commit();
     }
 
     @Override
-    public Advert findId(Integer id)
-    {
+    public Advert findId(Integer id) throws IllegalIdException {
         manager.getTransaction().begin();
         Advert a = manager.find(Advert.class, id);
         manager.getTransaction().commit();
-
+        if (a==null)
+            throw new IllegalIdException();
         return a;
     }
 

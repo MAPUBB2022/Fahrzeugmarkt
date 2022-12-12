@@ -1,5 +1,6 @@
 package repository.db_repo;
 
+import exceptions.IllegalIdException;
 import model.Advert;
 import model.Transaktion;
 import repository.TransactionRepository;
@@ -34,33 +35,37 @@ public class DBTransactionRepository implements TransactionRepository
     }
 
     @Override
-    public void delete(Integer id)
-    {
+    public void delete(Integer id) throws IllegalIdException {
         manager.getTransaction().begin();
         Transaktion a = manager.find(Transaktion.class, id);
-        manager.remove(a);
+        if(a!=null)
+            manager.remove(a);
+        else
+            throw new IllegalIdException();
         manager.getTransaction().commit();
     }
 
     @Override
-    public void update(Integer id, Transaktion transaktion)
-    {
+    public void update(Integer id, Transaktion transaktion) throws IllegalIdException {
         manager.getTransaction().begin();
         Transaktion a = manager.find(Transaktion.class, id);
-
-        a.update(transaktion);
-
-        manager.merge(a);
+        if(a!=null)
+        {
+            a.update(transaktion);
+            manager.merge(a);
+        }
+        else
+            throw new IllegalIdException();
         manager.getTransaction().commit();
     }
 
     @Override
-    public Transaktion findId(Integer id)
-    {
+    public Transaktion findId(Integer id) throws IllegalIdException {
         manager.getTransaction().begin();
         Transaktion a = manager.find(Transaktion.class, id);
         manager.getTransaction().commit();
-
+        if(a==null)
+            throw new IllegalIdException();
         return a;
     }
 
