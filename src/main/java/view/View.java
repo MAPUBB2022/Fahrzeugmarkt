@@ -179,7 +179,7 @@ public class View
                 //present ad in a detailed fashion
                 Advert currentAd = adList.get(globalCounter+inputToInt-1);
                 printAd(currentAd);
-                Transaktion currentBid = null;
+                Transaktion currentBid;
                 try {
                     currentBid = controller.getCurrentBid(currentAd);
                     System.out.printf("\nThe current bid on this Advert is %s Euro\n", currentBid.getAmount());
@@ -483,8 +483,7 @@ public class View
             if(loggedBenutzer instanceof Seller)
             {
                 System.out.print("\n\nHello Seller\n\nWhat do you want to do?\n\n1. Create an advert\n2. See your adverts\n3. See pending transactions\n4. Log out\n5. Quit\n\n Choose an option (1-5): ");
-                Scanner myObj = new Scanner(System.in);
-                int op = myObj.nextInt();
+                int op = readInt();
                 if(op == 1)
                 {
                     createAd();
