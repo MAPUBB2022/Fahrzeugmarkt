@@ -5,7 +5,6 @@ import exceptions.InvalidCredsException;
 import exceptions.InvalidInputException;
 import exceptions.NoTransactionException;
 import model.*;
-import org.hibernate.type.TrueFalseType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import repository.AdsRepository;
@@ -50,13 +49,13 @@ class ControllerTest {
             fail();
         }
         try {
-            testedCtrl.checkCreds("iordache", "iulia");
+            testedCtrl.checkCreds("iordache", "iulia"); // exception expected
             fail();
         } catch (InvalidCredsException e) {
             assertTrue(true);
         }
         try {
-            testedCtrl.checkCreds("veriku", "melissa");
+            testedCtrl.checkCreds("veriku", "melissa"); // exception expected
             fail();
         } catch (InvalidCredsException e) {
             assertTrue(true);
@@ -91,7 +90,7 @@ class ControllerTest {
             fail();
         }
         try {
-            testedCtrl.getCurrentBid(ad2);
+            testedCtrl.getCurrentBid(ad2); // exception expected
             fail();
         } catch (NoTransactionException e) {
             assertTrue(true);
@@ -125,7 +124,7 @@ class ControllerTest {
             fail();
         }
         try {
-            testedCtrl.getCurrentBuyer(ad2);
+            testedCtrl.getCurrentBuyer(ad2); // exception expected
             fail();
         } catch (NoTransactionException e) {
             assertTrue(true);

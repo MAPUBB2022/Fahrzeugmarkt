@@ -10,6 +10,7 @@ import repository.AdsRepository;
 import repository.TransactionRepository;
 import repository.UserRepository;
 
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Scanner;
@@ -32,6 +33,36 @@ public class View
         //////////////////////////////
         this.loggedBenutzer = null;
     }
+
+    private int readInt() {
+        Scanner scanner = new Scanner(System.in);
+        while (true) {
+            try {
+                return scanner.nextInt();
+            } catch (InputMismatchException e) {
+                // Print an error message and ask the user to enter a valid integer
+                System.out.println("Invalid input. Please enter a valid integer.");
+                // Clear the scanner's buffer to discard the invalid input
+                scanner.nextLine();
+            }
+        }
+    }
+
+    private boolean readBoolean() {
+        Scanner scanner = new Scanner(System.in);
+        while (true) {
+            try {
+                boolean input = scanner.nextBoolean();
+                return input;
+            } catch (InputMismatchException e) {
+                // Print an error message and ask the user to enter a valid boolean value
+                System.out.println("Invalid input. Please enter a valid boolean value (true or false).");
+                // Clear the scanner's buffer to discard the invalid input
+                scanner.nextLine();
+            }
+        }
+    }
+
 
     /**
      * prints all the details of an advert to the screen
@@ -124,7 +155,7 @@ public class View
     {
         adList = adList.stream().filter(n -> !controller.isExpired(n) && !controller.isSold(n)).collect(Collectors.toList());
         int globalCounter=0;
-        int i=0;
+        int i;
         while(globalCounter<adList.size())
         {
             for(i=0; i<10 && i+globalCounter < adList.size(); i++) // "Page size" is 10
@@ -136,16 +167,17 @@ public class View
 
             Scanner myObj = new Scanner(System.in);  // Create a Scanner object
             String userInput = myObj.nextLine();
-            if(Objects.equals(userInput, ""))
-            {
+            int inputToInt;
+            try {
+                inputToInt=Integer.parseInt(userInput);
+            } catch (NumberFormatException e) {
                 globalCounter+=i;
                 continue;
             }
-            int conve = Integer.parseInt(userInput);
-            if(conve>=1 && conve<=10)
+            if(inputToInt>=1 && inputToInt<=10)
             {
                 //present ad in a detailed fashion
-                Advert currentAd = adList.get(globalCounter+conve-1);
+                Advert currentAd = adList.get(globalCounter+inputToInt-1);
                 printAd(currentAd);
                 Transaktion currentBid = null;
                 try {
@@ -156,11 +188,11 @@ public class View
                 }
 
                 System.out.println("What would you like to do: \n1. Place a bid\n2. Buy the car\n\nChoose an option (1-2): ");
-                int opt = myObj.nextInt();
+                int opt = readInt();
                 if(opt==1)
                 {
                     System.out.println("How much would you like to bid? ");
-                    int amount = myObj.nextInt();
+                    int amount = readInt();
                     Transaktion transaktion = new Transaktion((Buyer) loggedBenutzer, currentAd, amount, true);
                     try {
                         controller.placeBid(transaktion);
@@ -246,22 +278,26 @@ public class View
             System.out.printf("Select a car (1-%s) or press enter to see the next page: ",i);
             Scanner myObj = new Scanner(System.in);  // Create a Scanner object
             String userInput = myObj.nextLine();
-            if(Objects.equals(userInput, ""))
+            int inputToInt;
+            try
             {
+                inputToInt = Integer.parseInt(userInput);
+            } catch (NumberFormatException e) {
                 globalCounter+=i;
                 continue;
             }
-            int conve = Integer.parseInt(userInput);
-            Advert currentAd = adverts.get(globalCounter+conve-1);
-            if(conve>=1 && conve<=10)
+
+
+            if(inputToInt>=1 && inputToInt<=10)
             {
+                Advert currentAd = adverts.get(globalCounter+inputToInt-1);
                 if(controller.isSold(currentAd))
                 {
                     try {
                         Transaktion t = controller.getCurrentBuyer(currentAd);
                         System.out.printf("%s has bought this advert!\n", t.getBuyer().getUsername());
                         System.out.println("What would you like to do: \n1. Accept the transaction\n2. Deny the transaction\n\nChoose an option (1-2): ");
-                        int opt = myObj.nextInt();
+                        int opt = readInt();
                         if(opt==1)
                         {
                             controller.acceptTransaction(t);
@@ -280,7 +316,7 @@ public class View
                         Transaktion currentTransaction = controller.getCurrentBid(currentAd);
                         System.out.printf("%s has won this advert!\n", currentTransaction.getBuyer().getUsername());
                         System.out.println("What would you like to do: \n1. Accept the transaction\n2. Deny the transaction\n\nChoose an option (1-2): ");
-                        int opt = myObj.nextInt();
+                        int opt = readInt();
                         if(opt==1)
                         {
                             controller.acceptTransaction(currentTransaction);
@@ -292,7 +328,7 @@ public class View
                     } catch (NoTransactionException e) {
                         System.out.print("The Advert has expired, and there are no bids or buy offers.\n");
                         System.out.println("What would you like to do: \n1. Remove the advert\n2. Refresh the advert\n\nChoose an option (1-2): ");
-                        int opt = myObj.nextInt();
+                        int opt = readInt();
                         if(opt==1)
                         {
                             try {
@@ -304,7 +340,7 @@ public class View
                         else if (opt==2)
                         {
                             System.out.println("For how many days would you like the Advert to be active: ");
-                            int days = myObj.nextInt();
+                            int days = readInt();
                             currentAd.setAuctionDays(days);
                             try {
                                 adsRepository.update(currentAd.getID(), currentAd);
@@ -362,7 +398,7 @@ public class View
             while(!success)
             {
                 success = true;
-                int type = myObj.nextInt();
+                int type = readInt();
                 if(type == 0)
                     b = new Admin(userInput, pass, location);
                 else if(type==1)
@@ -394,8 +430,7 @@ public class View
             if(loggedBenutzer instanceof Admin)
             {
                 System.out.print("\n\nHello Admin\n\nWhat do you want to do?\n\n1. Add user\n2. Remove user\n3. Log out\n4. Quit\n\n Choose an option (1-4): ");
-                Scanner myObj = new Scanner(System.in);
-                int op = myObj.nextInt();
+                int op = readInt();
                 if(op == 1)
                 {
                     addUser();
@@ -421,8 +456,7 @@ public class View
             if(loggedBenutzer instanceof Buyer)
             {
                 System.out.print("\n\nHello Buyer\n\nWhat do you want to do?\n\n1. See all ads from today\n2. See all ads\n3. Log out\n4. Quit\n\n Choose an option (1-4): ");
-                Scanner myObj = new Scanner(System.in);
-                int op = myObj.nextInt();
+                int op = readInt();
                 if(op == 1)
                 {
                     System.out.println("\nCars listed today:\n");
@@ -490,7 +524,7 @@ public class View
         Advert a;
         Scanner myObj = new Scanner(System.in);  // Create a Scanner object
         System.out.println("Car/Motorcycle (Press 1 or 0):");
-        is_Car=Boolean.parseBoolean(myObj.nextLine());
+        is_Car=readBoolean();
 
         System.out.println("Make:");
         String make = myObj.nextLine();
@@ -499,37 +533,37 @@ public class View
         String model = myObj.nextLine();
 
         System.out.println("Year:");
-        int year = Integer.parseInt(myObj.nextLine());
+        int year =  readInt();
 
         System.out.println("Displacement:");
-        int displacement = Integer.parseInt(myObj.nextLine());
+        int displacement = readInt();
 
         System.out.println("Horsepower:");
-        int hp = Integer.parseInt(myObj.nextLine());
+        int hp = readInt();
 
         System.out.println("Torque:");
-        int torque = Integer.parseInt(myObj.nextLine());
+        int torque = readInt();
 
         System.out.println("Used/new (Press 1 or 0):");
-        boolean used= Boolean.parseBoolean(myObj.nextLine());
+        boolean used= readBoolean();
 
         System.out.println("Automatic or manual gearbox (Press 1 or 0):");
-        boolean automaticGearbox= Boolean.parseBoolean(myObj.nextLine());
+        boolean automaticGearbox= readBoolean();
 
         System.out.println("Buy price:");
-        int buyPrice = Integer.parseInt(myObj.nextLine());
+        int buyPrice = readInt();
 
         System.out.println("Auction start price (0 if you don't want an auction):");
-        int startPrice = Integer.parseInt(myObj.nextLine());
+        int startPrice = readInt();
 
         System.out.println("How many days would you like the Advert to stay active:");
-        int auctionDays = Integer.parseInt(myObj.nextLine());
+        int auctionDays = readInt();
 
         if(is_Car){
             System.out.println("Number of doors:");
-            int nrDoors=Integer.parseInt(myObj.nextLine());
+            int nrDoors=readInt();
             System.out.println("Number of seats:");
-            int nrSeats=Integer.parseInt(myObj.nextLine());
+            int nrSeats=readInt();
             a = new Car((Seller) loggedBenutzer, auctionDays, make, model, year,displacement,hp,torque,used,automaticGearbox,nrDoors,nrSeats, buyPrice, startPrice);
         }
         else
