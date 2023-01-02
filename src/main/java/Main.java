@@ -23,7 +23,7 @@ public class Main {
         UserRepository userRepository = new DBUserRepository();
         AdsRepository adsRepository = new DBCarRepository();
         TransactionRepository transactionRepository = new DBTransactionRepository();
-        Controller controller = new Controller(userRepository, adsRepository, transactionRepository);
+        Controller controller = new Controller(userRepository, adsRepository, transactionRepository, false);
         View view = new View(controller, userRepository, adsRepository, transactionRepository);
 
         view.mainMenu();

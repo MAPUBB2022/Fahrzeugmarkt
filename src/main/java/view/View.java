@@ -12,7 +12,6 @@ import repository.UserRepository;
 
 import java.util.InputMismatchException;
 import java.util.List;
-import java.util.Objects;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
@@ -34,6 +33,10 @@ public class View
         this.loggedBenutzer = null;
     }
 
+    /**
+     * reads an integer from the user and returns it
+     * @return the integer retrieved from the user
+     */
     private int readInt() {
         Scanner scanner = new Scanner(System.in);
         while (true) {
@@ -48,6 +51,10 @@ public class View
         }
     }
 
+    /**
+     * reads a boolean from the user and returns it
+     * @return the boolean value retrieved from the user
+     */
     private boolean readBoolean() {
         Scanner scanner = new Scanner(System.in);
         while (true) {
@@ -230,7 +237,7 @@ public class View
             if(controller.isSold(a))
                 System.out.println("\nThis Advert has been sold!");
             printAdSummary(a);
-            Transaktion currentBid = null;
+            Transaktion currentBid;
             try {
                 currentBid = controller.getCurrentBid(a);
                 System.out.printf("\tCurrent bid: %s\n\n", currentBid.getAmount());
@@ -522,7 +529,7 @@ public class View
         boolean is_Car;
         Advert a;
         Scanner myObj = new Scanner(System.in);  // Create a Scanner object
-        System.out.println("Car/Motorcycle (Press 1 or 0):");
+        System.out.println("Car/Motorcycle (Type true or false):");
         is_Car=readBoolean();
 
         System.out.println("Make:");
@@ -543,10 +550,10 @@ public class View
         System.out.println("Torque:");
         int torque = readInt();
 
-        System.out.println("Used/new (Press 1 or 0):");
+        System.out.println("Used/new (Type true or false):");
         boolean used= readBoolean();
 
-        System.out.println("Automatic or manual gearbox (Press 1 or 0):");
+        System.out.println("Automatic or manual gearbox (Type true or false):");
         boolean automaticGearbox= readBoolean();
 
         System.out.println("Buy price:");

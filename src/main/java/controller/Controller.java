@@ -19,12 +19,6 @@ public class Controller
     private UserRepository userRepository;
     private AdsRepository adsRepository;
     private TransactionRepository transactionRepository;
-    public Controller(UserRepository userRepository, AdsRepository adsRepository, TransactionRepository transactionRepository) {
-        this.userRepository = userRepository;
-        this.adsRepository = adsRepository;
-        this.transactionRepository = transactionRepository;
-        //populate();
-    }
     public Controller(UserRepository userRepository, AdsRepository adsRepository, TransactionRepository transactionRepository, boolean pop) {
         this.userRepository = userRepository;
         this.adsRepository = adsRepository;
