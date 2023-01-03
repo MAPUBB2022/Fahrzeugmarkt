@@ -17,7 +17,7 @@ public abstract class Advert
     )
     private Seller seller;
     LocalDate placeDate; // date when the ad was put up
-    private int auctionDays; // 0 for no auction; YYYYMMDD for auction
+    private int auctionDays; // 0 for no auction
     private String make, model;
     private int year, displacement, hp, torque, startPrice, buyPrice;
     private boolean used, automaticGearbox;
