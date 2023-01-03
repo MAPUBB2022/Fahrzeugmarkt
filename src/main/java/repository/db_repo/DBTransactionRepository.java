@@ -13,8 +13,7 @@ import java.util.List;
 
 public class DBTransactionRepository implements TransactionRepository
 {
-    private EntityManagerFactory factory;
-    private EntityManager manager;
+    private final EntityManager manager;
 
     /**
      * initializer for the database repository
@@ -22,7 +21,7 @@ public class DBTransactionRepository implements TransactionRepository
      */
     public DBTransactionRepository()
     {
-        factory = Persistence.createEntityManagerFactory("default");
+        EntityManagerFactory factory = Persistence.createEntityManagerFactory("default");
         manager = factory.createEntityManager();
     }
 

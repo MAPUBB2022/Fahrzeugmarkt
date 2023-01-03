@@ -11,7 +11,7 @@ import java.util.List;
 
 public class InMemoryUserRepository implements UserRepository
 {
-    private List<Benutzer> allBenutzers;
+    private final List<Benutzer> allBenutzers;
 
     public InMemoryUserRepository()
     {
@@ -30,7 +30,6 @@ public class InMemoryUserRepository implements UserRepository
     @Override
     public void add(Benutzer benutzer)
     {
-        //TODO de verificat daca username ul e disponibil
         boolean validUser = true;
         for(Benutzer u: allBenutzers)
         {

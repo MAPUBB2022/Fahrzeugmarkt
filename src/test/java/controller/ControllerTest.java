@@ -29,7 +29,7 @@ class ControllerTest {
     @BeforeEach
     void setUp()
     {
-        adsRepository = new InMemoryCarRepository();
+        adsRepository = new InMemoryCarRepository(false);
         userRepository = new InMemoryUserRepository();
         transactionRepository = new InMemoryTransactionRepository();
         testedCtrl = new Controller(userRepository, adsRepository, transactionRepository, true);

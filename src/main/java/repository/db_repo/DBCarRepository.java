@@ -3,18 +3,19 @@ package repository.db_repo;
 import exceptions.IllegalIdException;
 import model.Advert;
 import model.Seller;
-import model.Transaktion;
 import repository.AdsRepository;
 
-import javax.persistence.*;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
+import javax.persistence.PersistenceException;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.List;
 
 public class DBCarRepository implements AdsRepository
 {
-    private EntityManagerFactory factory;
-    private EntityManager manager;
+    private final EntityManager manager;
 
     /**
      * initializer for the database repository
@@ -22,7 +23,7 @@ public class DBCarRepository implements AdsRepository
      */
     public DBCarRepository()
     {
-        factory = Persistence.createEntityManagerFactory("default");
+        EntityManagerFactory factory = Persistence.createEntityManagerFactory("default");
         manager = factory.createEntityManager();
     }
 

@@ -11,18 +11,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class InMemoryCarRepository implements AdsRepository {
-    private List<Advert> advertList;
+    private final List<Advert> advertList;
     private int currentID = 0;
     public InMemoryCarRepository(boolean pop)
     {
         this.advertList = new ArrayList<>();
-        populate();
+        if(pop)
+            populate();
     }
-    public InMemoryCarRepository()
-    {
-        this.advertList = new ArrayList<>();
-    }
-
     private void populate()
     {
         Seller s = new Seller("veriku", "1234", "Pitesti");

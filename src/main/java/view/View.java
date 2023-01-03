@@ -7,7 +7,6 @@ import exceptions.InvalidInputException;
 import exceptions.NoTransactionException;
 import model.*;
 import repository.AdsRepository;
-import repository.TransactionRepository;
 import repository.UserRepository;
 
 import java.util.InputMismatchException;
@@ -17,18 +16,16 @@ import java.util.stream.Collectors;
 
 public class View
 {
-    private Controller controller;
-    private UserRepository userRepository;
-    private AdsRepository adsRepository;
-    private TransactionRepository transactionRepository;
+    private final Controller controller;
+    private final UserRepository userRepository;
+    private final AdsRepository adsRepository;
 
     private Benutzer loggedBenutzer;
 
-    public View(Controller controller, UserRepository userRepository, AdsRepository adsRepository, TransactionRepository transactionRepository) {
+    public View(Controller controller, UserRepository userRepository, AdsRepository adsRepository) {
         this.controller = controller;
         this.userRepository = userRepository;
         this.adsRepository = adsRepository;
-        this.transactionRepository = transactionRepository;
         //////////////////////////////
         this.loggedBenutzer = null;
     }
@@ -59,8 +56,7 @@ public class View
         Scanner scanner = new Scanner(System.in);
         while (true) {
             try {
-                boolean input = scanner.nextBoolean();
-                return input;
+                return scanner.nextBoolean();
             } catch (InputMismatchException e) {
                 // Print an error message and ask the user to enter a valid boolean value
                 System.out.println("Invalid input. Please enter a valid boolean value (true or false).");
@@ -160,6 +156,7 @@ public class View
      */
     private void presentAdsBuyer(List<Advert> adList)
     {
+        Scanner inputScanner = new Scanner(System.in);  // Create a Scanner object
         adList = adList.stream().filter(n -> !controller.isExpired(n) && !controller.isSold(n)).collect(Collectors.toList());
         int globalCounter=0;
         int i;
@@ -172,8 +169,7 @@ public class View
             }
             System.out.printf("Select a car (1-%s) or press enter to see the next page: ",i);
 
-            Scanner myObj = new Scanner(System.in);  // Create a Scanner object
-            String userInput = myObj.nextLine();
+            String userInput = inputScanner.nextLine();
             int inputToInt;
             try {
                 inputToInt=Integer.parseInt(userInput);
@@ -181,6 +177,7 @@ public class View
                 globalCounter+=i;
                 continue;
             }
+
             if(inputToInt>=1 && inputToInt<=10)
             {
                 //present ad in a detailed fashion

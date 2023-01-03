@@ -8,7 +8,7 @@ import java.util.List;
 
 public class InMemoryTransactionRepository implements TransactionRepository
 {
-    private List<Transaktion> transaktionList;
+    private final List<Transaktion> transaktionList;
     private int currentID;
 
     public InMemoryTransactionRepository() {

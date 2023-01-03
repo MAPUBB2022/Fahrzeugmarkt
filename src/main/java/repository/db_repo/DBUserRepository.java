@@ -1,20 +1,18 @@
 package repository.db_repo;
 
 import exceptions.IllegalIdException;
-import model.Admin;
 import model.Benutzer;
-import model.Buyer;
-import model.Seller;
 import repository.UserRepository;
 
-import javax.persistence.*;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
+import javax.persistence.PersistenceException;
 import java.util.List;
-import java.util.Objects;
 
 public class DBUserRepository implements UserRepository
 {
-    private EntityManagerFactory factory;
-    private EntityManager manager;
+    private final EntityManager manager;
 
     /**
      * initializer for the database repository
@@ -22,7 +20,7 @@ public class DBUserRepository implements UserRepository
      */
     public DBUserRepository()
     {
-        factory = Persistence.createEntityManagerFactory("default");
+        EntityManagerFactory factory = Persistence.createEntityManagerFactory("default");
         manager = factory.createEntityManager();
     }
 

@@ -10,5 +10,5 @@ public interface UserRepository extends ICrudRepository<String, Benutzer>
      * @param password the password that is searched
      * @return the user with the given usernamme and password. if it doesn't exist, null is returned
      */
-    public Benutzer findByUserAnsPass(String username, String password);
+    Benutzer findByUserAnsPass(String username, String password);
 }
