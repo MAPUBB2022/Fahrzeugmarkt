@@ -255,7 +255,7 @@ public class View
         adverts = adverts.stream().filter(n -> controller.isExpired(n) || controller.isSold(n) ).collect(Collectors.toList());
 
         int globalCounter=0;
-        int i=0;
+        int i;
         while(globalCounter<adverts.size())
         {
             for(i=0; i<10 && i+globalCounter < adverts.size(); i++) // "Page size" is 10
@@ -379,7 +379,7 @@ public class View
      * interface for adding users to the platform
      * user is prompted for username, password and location
      */
-    public void addUser()
+    private void addUser()
     {
         System.out.print("Enter a username: ");
         Scanner myObj = new Scanner(System.in);  // Create a Scanner object
@@ -522,7 +522,7 @@ public class View
      * interface for creating an advert
      * the user is prompted for all parameters in oder to add the car to the platform
      */
-    public void createAd(){
+    private void createAd(){
         boolean is_Car;
         Advert a;
         Scanner myObj = new Scanner(System.in);  // Create a Scanner object
