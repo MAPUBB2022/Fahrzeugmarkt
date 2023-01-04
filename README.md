@@ -1,17 +1,18 @@
 # Fahrzeugmarkt
-Buy and sell Cars and motorcycles
+Autos und Motorräder kaufen und verkaufen. 
 
-Bei der Fahrzeugmarkt kann man Autos und Motorraeder kaufen und verkaufen. 
-Jedes Objekt hat allbemeine Attribute (Marke, Modell, Jahr, Hubraum, PS, Drehmoment etc) aber auch Attribute spezifisch fuer ein Auto oder Motorrad (Anzahl Tuere / Art der Suspension etc)
+Jedes Objekt hat allgemeine Attribute (Marke, Modell, Jahr, Hubraum, PS, Drehmoment etc) aber auch Attribute spezifisch für ein Auto oder Motorrad (Anzahl Türe / Art der Federung etc)
 
-Benuetzer teilen sich in 3 Kategorien ein: Kaufer, Verkaufer, Administrator
-Alle haben allgemeine Attribute wie Name, Password und Stadt
+Benutzer fallen in 3 Kategorien: Käufer, Verkäufer und Administratoren
+Alle haben gemeinsame Attribute wie Benutzername, Passwort und Standort, aber auch spezifische.
 
-Jeder Kaufer kann sich alle verfügbare Anzeigen anschauen.
-Wenn sie sich entscheiden, können sie entweder ein Gebot abgeben oder direkt kaufen. (Eine Transaktion einsenden)
+Jeder Käufer kann sich alle verfügbare Anzeigen anschauen.
+Wenn sie sich entscheiden, können sie ein Gebot abgeben oder die Anzeige direkt kaufen. (Eine Transaktion einsenden)
 
-Die Verkaufer haben ein zusätzliches Attribut, Rating, der die Kaufer sehen konnen. Diese konnen neue Autos auf dem Markt stellen oder loeschen.
+Die Verkäufer haben ein zusätzliches Attribut, Rating, der die Käufer sehen können. Diese können neue Autos auf dem Markt stellen oder löschen.
+Falls ein Käufer eine Anzeige kauft oder die Auktion gewinnt, kann der Verkäufer diese Transaktion annehmen oder ablehnen. Falls eine Auktion zu Ende kommt und niemand darauf geboten hat, kann der Verkäufer entweder die Anzeige verlängern oder diese löschen.
 
-Der Administrator konnen mehrere Statistik- und Systemfunktionen ausfuehren (Alle fahrzeuge von ein benutzer sehen, alle neue ads von heute sehen, etc)
+Der Administrator kann neue Benützer erstellen oder bereits existierende Benützer löschen.
 
-![Die Diagramm](https://github.com/MAPUBB2022/Fahrzeugmarkt/blob/d58243a1d0ab125a84ffb50e9e9d36f30cd30122/src.png)
+![Diagramm A](https://github.com/MAPUBB2022/Fahrzeugmarkt/blob/2295b52ced04c1556c88a2f494f1a1d17a6bb099/Diag_A.png)
+![Diagramm B](https://github.com/MAPUBB2022/Fahrzeugmarkt/blob/2295b52ced04c1556c88a2f494f1a1d17a6bb099/Diag_B.png)
