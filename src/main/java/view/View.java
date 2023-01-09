@@ -9,9 +9,7 @@ import model.*;
 import repository.AdsRepository;
 import repository.UserRepository;
 
-import java.util.InputMismatchException;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class View
@@ -360,7 +358,7 @@ public class View
     }
 
     /**
-     * interface for removing users from the platform (designed for admins)
+     * user interface for removing users from the platform (designed for admins)
      * the admin is asked for the username of the user selected for deletion
      */
     public void removeUser()
@@ -376,7 +374,7 @@ public class View
     }
 
     /**
-     * interface for adding users to the platform
+     * user interface for adding users to the platform
      * user is prompted for username, password and location
      */
     private void addUser()
@@ -414,6 +412,68 @@ public class View
             }
             userRepository.add(b);
         }
+    }
+
+    /**
+     * user interface for searching cars and motorcycles by a particular term
+     */
+    private void searchMenu()
+    {
+        Scanner myObj = new Scanner(System.in);
+        System.out.println("What do you want to search? Enter here: ");
+        String searchTerm = myObj.nextLine();
+        List<Advert> adList = adsRepository.findAll();
+        List<Advert> resultList = new ArrayList<>();
+        for (Advert a: adList)
+        {
+            if(a.getMake().toLowerCase().contains(searchTerm.toLowerCase()) || a.getModel().toLowerCase().contains(searchTerm.toLowerCase()))
+                resultList.add(a);
+        }
+        presentAdsBuyer(resultList);
+    }
+
+    /**
+     * user interface for filtering the database of adverts by mfg. year and mileage
+     */
+    private void filterMenu()
+    {
+        System.out.print("Cars newer than what year do you want to see? ('*' for any): ");
+        Scanner myObj = new Scanner(System.in);  // Create a Scanner object
+        String userInput = myObj.nextLine();
+        int year;
+        try
+        {
+            year = Integer.parseInt(userInput);
+        } catch (NumberFormatException e) {
+            if(userInput.equals("*"))
+                year=-1;
+            else
+            {
+                System.out.println("Invalid input. Please try again.");
+                return;
+            }
+        }
+        System.out.println("Cars cheaper than how much do you want to see? ('*' for any): ");
+        userInput = myObj.nextLine();
+        int price;
+        try
+        {
+            price = Integer.parseInt(userInput);
+        } catch (NumberFormatException e) {
+            if(userInput.equals("*"))
+                price=900000000;
+            else
+            {
+                System.out.println("Invalid input. Please try again.");
+                return;
+            }
+        }
+
+        List<Advert> adList = adsRepository.findAll();
+        int finalYear = year;
+        int finalPrice = price;
+        adList = adList.stream().filter(a -> a.getYear() > finalYear && a.getBuyPrice() < finalPrice).toList();
+        presentAdsBuyer(adList);
     }
 
     /**
@@ -459,24 +519,40 @@ public class View
             }
             if(loggedBenutzer instanceof Buyer)
             {
-                System.out.print("\n\nHello Buyer\n\nWhat do you want to do?\n\n1. See all ads from today\n2. See all ads\n3. Log out\n4. Quit\n\n Choose an option (1-4): ");
+                System.out.print("\n\nHello Buyer\n\nWhat do you want to do?\n\n1. Search for a car\n2. Filter cars by age and/or mileage\n3. Sort cars by price\n4. See all ads from today\n5. See all ads\n6. Log out\n7. Quit\n\n Choose an option (1-7): ");
                 int op = readInt();
                 if(op == 1)
+                {
+                    System.out.println("\nCar and Motorcycle search:\n");
+                    searchMenu();
+                }
+                else if(op == 2)
+                {
+                    filterMenu();
+                }
+                else if(op == 3)
+                {
+                    System.out.println("\nCars sorted by price:\n");
+                    List<Advert> a  = adsRepository.findAll();
+                    a.sort(Comparator.comparingInt(Advert::getBuyPrice));
+                    presentAdsBuyer(a);
+                }
+                else if(op == 4)
                 {
                     System.out.println("\nCars listed today:\n");
                     presentAdsBuyer(adsRepository.getAllAdsFromToday());
                 }
-                else if (op == 2)
+                else if (op == 5)
                 {
                     System.out.println("\nComplete car list:\n");
                     presentAdsBuyer(adsRepository.findAll());
                 }
-                else if (op == 3)
+                else if (op == 6)
                 {
                     System.out.println("\nLogging out\n");
                     loggedBenutzer=null;
                 }
-                else if (op == 4)
+                else if (op == 7)
                 {
                     System.out.println("\nQuitting\n");
                     break;

@@ -16,9 +16,9 @@ import java.util.List;
 
 public class Controller
 {
-    private UserRepository userRepository;
-    private AdsRepository adsRepository;
-    private TransactionRepository transactionRepository;
+    private final UserRepository userRepository;
+    private final AdsRepository adsRepository;
+    private final TransactionRepository transactionRepository;
     public Controller(UserRepository userRepository, AdsRepository adsRepository, TransactionRepository transactionRepository, boolean pop) {
         this.userRepository = userRepository;
         this.adsRepository = adsRepository;
