@@ -134,10 +134,10 @@ public class View
         try
         {
                 Scanner myObj = new Scanner(System.in);
-                System.out.println("Enter username: ");
+                System.out.print("Enter username: ");
                 String username = myObj.nextLine();
 
-                System.out.println("Enter password: ");
+                System.out.print("Enter password: ");
                 String password = myObj.nextLine();
 
                 loggedBenutzer = controller.checkCreds(username, password);
@@ -189,11 +189,11 @@ public class View
                     System.out.print("\nThere are no bids on this Advert\n");
                 }
 
-                System.out.println("What would you like to do: \n1. Place a bid\n2. Buy the car\n\nChoose an option (1-2): ");
+                System.out.print("What would you like to do: \n1. Place a bid\n2. Buy the car\n\nChoose an option (1-2): ");
                 int opt = readInt();
                 if(opt==1)
                 {
-                    System.out.println("How much would you like to bid? ");
+                    System.out.print("How much would you like to bid? ");
                     int amount = readInt();
                     Transaktion transaktion = new Transaktion((Buyer) loggedBenutzer, currentAd, amount, true);
                     try {
@@ -298,7 +298,7 @@ public class View
                     try {
                         Transaktion t = controller.getCurrentBuyer(currentAd);
                         System.out.printf("%s has bought this advert!\n", t.getBuyer().getUsername());
-                        System.out.println("What would you like to do: \n1. Accept the transaction\n2. Deny the transaction\n\nChoose an option (1-2): ");
+                        System.out.print("What would you like to do: \n1. Accept the transaction\n2. Deny the transaction\n\nChoose an option (1-2): ");
                         int opt = readInt();
                         if(opt==1)
                         {
@@ -317,7 +317,7 @@ public class View
                     try {
                         Transaktion currentTransaction = controller.getCurrentBid(currentAd);
                         System.out.printf("%s has won this advert!\n", currentTransaction.getBuyer().getUsername());
-                        System.out.println("What would you like to do: \n1. Accept the transaction\n2. Deny the transaction\n\nChoose an option (1-2): ");
+                        System.out.print("What would you like to do: \n1. Accept the transaction\n2. Deny the transaction\n\nChoose an option (1-2): ");
                         int opt = readInt();
                         if(opt==1)
                         {
@@ -329,7 +329,7 @@ public class View
                         }
                     } catch (NoTransactionException e) {
                         System.out.print("The Advert has expired, and there are no bids or buy offers.\n");
-                        System.out.println("What would you like to do: \n1. Remove the advert\n2. Refresh the advert\n\nChoose an option (1-2): ");
+                        System.out.print("What would you like to do: \n1. Remove the advert\n2. Refresh the advert\n\nChoose an option (1-2): ");
                         int opt = readInt();
                         if(opt==1)
                         {
@@ -341,7 +341,7 @@ public class View
                         }
                         else if (opt==2)
                         {
-                            System.out.println("For how many days would you like the Advert to be active: ");
+                            System.out.print("For how many days would you like the Advert to be active: ");
                             int days = readInt();
                             currentAd.setAuctionDays(days);
                             try {
@@ -376,41 +376,59 @@ public class View
     /**
      * user interface for adding users to the platform
      * user is prompted for username, password and location
+     * @param isAdmin if user that uses this function is an admin,
+     *                they have the ability to create other admins
      */
-    private void addUser()
+    private void addUser(boolean isAdmin)
     {
-        System.out.print("Enter a username: ");
-        Scanner myObj = new Scanner(System.in);  // Create a Scanner object
-        String userInput = myObj.nextLine();
 
-        try
+        Scanner myObj = new Scanner(System.in);  // Create a Scanner object
+        boolean succesCreateUser = false;
+        while (!succesCreateUser)
         {
-            userRepository.findId(userInput);
-            System.out.println("Username is taken\n");
-        }
-        catch (IllegalIdException e)
-        {
-            System.out.println("Enter a password: ");
-            String pass = myObj.nextLine();
-            System.out.println("Enter your location: ");
-            String location = myObj.nextLine();
-            System.out.print("What kind of user is this?\n0 - Admin\n1 - Buyer\n2 - Seller\nChoose a type (1-3): ");
-            boolean success = false;
-            Benutzer b = null;
-            while(!success)
-            {
-                success = true;
-                int type = readInt();
-                if(type == 0)
-                    b = new Admin(userInput, pass, location);
-                else if(type==1)
-                    b = new Buyer(userInput, pass, location);
-                else if(type==2)
-                    b = new Seller(userInput, pass, location);
-                else
-                    success = false;
+            System.out.print("Enter a username: ");
+            String userInput = myObj.nextLine();
+            try {
+                userRepository.findId(userInput);
+                System.out.print("Username is taken\n");
+            } catch (IllegalIdException e) {
+                System.out.print("Enter a password: ");
+                String pass = myObj.nextLine();
+                System.out.print("Enter your location: ");
+                String location = myObj.nextLine();
+                Benutzer b = null;
+                succesCreateUser = true;
+                if (isAdmin) {
+                    System.out.print("What kind of user is this?\n0 - Admin\n1 - Buyer\n2 - Seller\nChoose a type (0-2): ");
+                    boolean success = false;
+                    while (!success) {
+                        success = true;
+                        int type = readInt();
+                        if (type == 0)
+                            b = new Admin(userInput, pass, location);
+                        else if (type == 1)
+                            b = new Buyer(userInput, pass, location);
+                        else if (type == 2)
+                            b = new Seller(userInput, pass, location);
+                        else
+                            success = false;
+                    }
+                } else {
+                    System.out.print("What kind of user is this?\n1 - Buyer\n2 - Seller\nChoose a type (1-2): ");
+                    boolean success = false;
+                    while (!success) {
+                        success = true;
+                        int type = readInt();
+                        if (type == 1)
+                            b = new Buyer(userInput, pass, location);
+                        else if (type == 2)
+                            b = new Seller(userInput, pass, location);
+                        else
+                            success = false;
+                    }
+                }
+                userRepository.add(b);
             }
-            userRepository.add(b);
         }
     }
 
@@ -420,7 +438,7 @@ public class View
     private void searchMenu()
     {
         Scanner myObj = new Scanner(System.in);
-        System.out.println("What do you want to search? Enter here: ");
+        System.out.print("What do you want to search? Enter here: ");
         String searchTerm = myObj.nextLine();
         List<Advert> adList = adsRepository.findAll();
         List<Advert> resultList = new ArrayList<>();
@@ -453,7 +471,7 @@ public class View
                 return;
             }
         }
-        System.out.println("Cars cheaper than how much do you want to see? ('*' for any): ");
+        System.out.print("Cars cheaper than how much do you want to see? ('*' for any): ");
         userInput = myObj.nextLine();
         int price;
         try
@@ -486,7 +504,21 @@ public class View
         {
             if (loggedBenutzer == null)
             {
-                login();
+                System.out.print("\nWelcome!\n\nWhat do you want to?\n1. Log in\n2. Sign up\n3. Exit\n\n Choose an option (1-3): ");
+                int op = readInt();
+                if(op == 1)
+                {
+                    login();
+                }
+                else if (op == 2)
+                {
+                    addUser(false);
+                }
+                else if (op == 3)
+                {
+                    System.out.print("\nQuitting\n");
+                    return;
+                }
                 if(loggedBenutzer != null)
                     continue;
             }
@@ -497,7 +529,7 @@ public class View
                 int op = readInt();
                 if(op == 1)
                 {
-                    addUser();
+                    addUser(true);
                 }
                 else if (op == 2)
                 {
@@ -602,54 +634,54 @@ public class View
         boolean is_Car;
         Advert a;
         Scanner myObj = new Scanner(System.in);  // Create a Scanner object
-        System.out.println("Car/Motorcycle (Type true or false):");
+        System.out.print("Car/Motorcycle (Type true or false): ");
         is_Car=readBoolean();
 
-        System.out.println("Make:");
+        System.out.print("Make: ");
         String make = myObj.nextLine();
 
-        System.out.println("Model:");
+        System.out.print("Model: ");
         String model = myObj.nextLine();
 
-        System.out.println("Year:");
+        System.out.print("Year: ");
         int year =  readInt();
 
-        System.out.println("Displacement:");
+        System.out.print("Displacement: ");
         int displacement = readInt();
 
-        System.out.println("Horsepower:");
+        System.out.print("Horsepower: ");
         int hp = readInt();
 
-        System.out.println("Torque:");
+        System.out.print("Torque: ");
         int torque = readInt();
 
-        System.out.println("Used/new (Type true or false):");
+        System.out.print("Used/new (Type true or false): ");
         boolean used= readBoolean();
 
-        System.out.println("Automatic or manual gearbox (Type true or false):");
+        System.out.print("Automatic or manual gearbox (Type true or false): ");
         boolean automaticGearbox= readBoolean();
 
-        System.out.println("Buy price:");
+        System.out.print("Buy price: ");
         int buyPrice = readInt();
 
-        System.out.println("Auction start price (0 if you don't want an auction):");
+        System.out.print("Auction start price (0 if you don't want an auction): ");
         int startPrice = readInt();
 
-        System.out.println("How many days would you like the Advert to stay active:");
+        System.out.print("How many days would you like the Advert to stay active: ");
         int auctionDays = readInt();
 
         if(is_Car){
-            System.out.println("Number of doors:");
+            System.out.print("Number of doors: ");
             int nrDoors=readInt();
-            System.out.println("Number of seats:");
+            System.out.print("Number of seats: ");
             int nrSeats=readInt();
             a = new Car((Seller) loggedBenutzer, auctionDays, make, model, year,displacement,hp,torque,used,automaticGearbox,nrDoors,nrSeats, buyPrice, startPrice);
         }
         else
         {
-            System.out.println("Suspension type:");
+            System.out.print("Suspension type: ");
             String suspensionType = myObj.nextLine();
-            System.out.println("Brake type:");
+            System.out.print("Brake type: ");
             String brakeType = myObj.nextLine();
             a = new Motorcycle( (Seller) loggedBenutzer, auctionDays, make, model, year,displacement,hp,torque,used,automaticGearbox,suspensionType,brakeType, buyPrice, startPrice);
         }
